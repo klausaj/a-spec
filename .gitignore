@@ -1,0 +1,13 @@
+build/x86-linux/bin/a-specc
+build/mingw/bin/a-specc
+*.swp
+*.o
+*.aux
+*.dvi
+*.log
+*.pdf
+*.toc
+doc/out
+include/grammar/a-spec.tab.h
+src/grammar/a-spec.lex.c
+src/grammar/a-spec.tab.c
