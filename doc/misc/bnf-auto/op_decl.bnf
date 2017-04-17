@@ -1,0 +1,4 @@
+   \bnfelem{op\_decl} & ::= & \bnfelem{TOK\_REL\_ID} \bnfelem{TOK\_OP\_TYPE} \bnfelem{TOK\_IDENT} & \\
+                      &     & \bnfelem{TOK\_COLON} \bnfelem{expr} \bnfor & \\
+                      &     & \bnfelem{TOK\_OPER\_ID} \bnfelem{TOK\_OP\_TYPE} \bnfelem{TOK\_IDENT} & \\
+                      &     & \bnfelem{TOK\_COLON} \bnfelem{expr} & \\

@@ -1,0 +1,3 @@
+   \bnfelem{var\_decl} & ::= & \bnfelem{var\_ident} \bnfelem{TOK\_COLON} \bnfelem{expr} \bnfor & \\
+                       &     & \bnfelem{var\_ident} \bnfelem{var\_post\_decor} \bnfelem{TOK\_COLON} & \\
+                       &     & \bnfelem{expr} & \\

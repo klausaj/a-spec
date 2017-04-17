@@ -1,0 +1,3 @@
+   \bnfelem{lambda} & ::= & \bnfelem{TOK\_LAMBDA} \bnfelem{TOK\_OCURLY} \bnfelem{decl\_list} & \\
+                    &     & \bnfelem{TOK\_QUEST} \bnfelem{pred\_list0} \bnfelem{TOK\_AT} & \\
+                    &     & \bnfelem{expr} \bnfelem{TOK\_CCURLY} & \\

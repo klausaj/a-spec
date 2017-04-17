@@ -1,0 +1,6 @@
+   \bnfelem{var\_post\_decor} & ::= & \bnfelem{TOK\_OSQUARE} \bnfelem{TOK\_POST\_DECOR} & \\
+                              &     & \bnfelem{TOK\_CSQUARE} \bnfor & \\
+                              &     & \bnfelem{TOK\_OSQUARE} \bnfelem{TOK\_QUEST} & \\
+                              &     & \bnfelem{TOK\_CSQUARE} \bnfor & \\
+                              &     & \bnfelem{TOK\_OSQUARE} \bnfelem{TOK\_EXCLAIM} & \\
+                              &     & \bnfelem{TOK\_CSQUARE} & \\

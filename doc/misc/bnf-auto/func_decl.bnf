@@ -1,0 +1,4 @@
+   \bnfelem{func\_decl} & ::= & \bnfelem{TOK\_BOOL\_ID} \bnfelem{TOK\_IDENT} \bnfelem{TOK\_COLON} & \\
+                        &     & \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_FUNC\_ID} \bnfelem{TOK\_IDENT} \bnfelem{TOK\_COLON} & \\
+                        &     & \bnfelem{expr} & \\

@@ -1,0 +1,5 @@
+   \bnfelem{type\_decl} & ::= & \bnfelem{TOK\_IDENT} \bnfelem{TOK\_EQUALS} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_IDENT} \bnfelem{gen\_term} \bnfelem{TOK\_EQUALS} & \\
+                        &     & \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{gen\_term} \bnfelem{TOK\_IDENT} \bnfelem{gen\_term} & \\
+                        &     & \bnfelem{TOK\_EQUALS} \bnfelem{expr} & \\

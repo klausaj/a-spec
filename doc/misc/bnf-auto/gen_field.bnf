@@ -1,0 +1,1 @@
+   \bnfelem{gen\_field} & ::= & \bnfelem{TOK\_OSQUARE} \bnfelem{gen\_list} \bnfelem{TOK\_CSQUARE} & \\

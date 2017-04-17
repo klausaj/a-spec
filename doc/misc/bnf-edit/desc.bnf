@@ -1,0 +1,3 @@
+   \bnfelem{desc} & ::= & \bnfelem{TOK\_DESC\_START} \bnfelem{prop} \bnfelem{text} & \\
+                  &     & \bnfelem{TOK\_DESC\_END} \bnfor & \\
+                  &     & \bnfelem{text} & \\

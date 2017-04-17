@@ -1,0 +1,4 @@
+   \bnfelem{type} & ::= & \bnfelem{TOK\_TYPE\_START} \bnfelem{par\_id} \bnfelem{prop} & \\
+                  &     & \bnfelem{type\_list} \bnfelem{TOK\_BLOCK\_END} \bnfor & \\
+                  &     & \bnfelem{TOK\_TYPE\_START} \bnfelem{par\_id} \bnfelem{type\_list} & \\
+                  &     & \bnfelem{TOK\_BLOCK\_END} & \\

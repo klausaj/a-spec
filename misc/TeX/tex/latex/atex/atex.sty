@@ -1,0 +1,172 @@
+\ProvidesPackage{atex}
+
+\RequirePackage{amsmath}
+\RequirePackage{oz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def \ATeXEnabled {1}
+
+\newcommand{\setof}[1]%
+{%
+   \{ #1 \}%
+}%
+
+\newcommand{\seqof}[1]%
+{%
+   \langle #1 \rangle%
+}%
+
+\newcommand{\typedef}[2]%
+{%
+   #1 == \M#2\O%
+}%
+
+\newcommand{\extract}%
+{%
+   \upharpoonleft%
+}%
+
+\newcommand{\LET}%
+{%
+   {\bf let}%
+}%
+
+\def \schdef {\mathrel{\widehat=}}
+\def \bindeq {\mathrel{\Rrightarrow}}
+\def \IF {{\bf if}}
+\def \THEN {\mathrel{\bf then}\;}
+\def \ELSE {\mathrel{\bf else}\;}
+\def \ELIF {{\bf elif}}
+\def \ENDIF {\mathrel{\bf endif}}
+\def \UNDEF {\mathrel{\bf \_UNDEFINED\_}}
+\def \ERROR {\mathrel{\bf \_ERROR\_}}
+\def \prefix {\mathrel{\sf prefix}}
+\def \suffix {\mathrel{\sf suffix}}
+\def \inseq  {\mathrel{\sf in}}
+\def \seqidx  {\mathrel{\sf index}}
+\def \split  {\mathrel{\sf split}}
+\def \join  {\mathrel{\sf join}}
+\def \trim  {\mathrel{\sf trim}}
+\def \unprime  {\keyword{unprime}}
+\def \zType  {\mathrel{\sf type}}
+\def \mod  {\mathrel{\sf mod}}
+\def \div  {\mathrel{\sf div}}
+\def \size  {\#}
+\def \relimg  {\limg \rimg}
+\def \first  {\mathrel{\sf first}}
+\def \second  {\mathrel{\sf second}}
+\def \zin  {\mathrel{\sf input}}
+\def \zout  {\mathrel{\sf output}}
+\def \hide  {\mathrel{\setminus}}
+\def \colon  {\!\!\hspace{1pt}:}
+
+\newcommand{\mathnote}[1]%
+{%
+   $/*#1*/$%
+}%
+
+\newcommand{\formaltext}[1]%
+{%
+   {\parindent=0in \leftskip=.5in \rightskip=1in \sffamily #1 \par}%
+}%
+
+\newcommand{\zPri}[1]%
+{%
+   '^{{#1}}%
+}%
+
+\newcommand{\zDelta}[1]%
+{%
+   \Delta^{{#1}}%
+}%
+
+\newcommand{\schType}[1]%
+{%
+   \lblot #1 \rblot%
+}%
+
+\newcommand{\schBind}[1]%
+{%
+   \lblot #1 \rblot%
+}%
+
+\def\zbox#1{\z@inoutbox\z@topline{$\,#1\,$}}
+\def\endzbox{\z@botline \endzed \z@makeinner \z@nopar}
+
+\def\pthen{\tfun}
+\def\proc{\mathrel{\sf proc}}
+\def\chan{\mathrel{\sf chan}}
+\def\phide{\zhide}
+\def\pren{\Lleftarrow}
+\def\zover{\z@bigrel\odot}
+\def\ifpar#1{\mathrel{\underset{#1}{\parallel}}}
+\def\ifparrepl#1{\mathrel{\underset{#1}{\zbig\parallel}}}
+
+\def\process#1{\z@inoutbox\z@topline{$\,#1\,$}}
+\def\endprocess{\endzed \z@makeinner \z@nopar}
+
+\mathchardef\loptc="445B
+\mathchardef\roptc="545D
+
+\def\lopt{\loptc\!}
+\def\ropt{\roptc}
+
+\makeatletter
+\newcommand{\note}%
+{%
+   \@ifstar%
+      \noteStar%
+      \noteNoStar%
+}%
+\makeatother
+\newcommand{\noteStar}[1]{${\sf [#1]}$}
+\newcommand{\noteNoStar}[1]{\ ${\sf [#1]}$}
+
+\makeatletter
+\newcommand{\bfnote}%
+{%
+   \@ifstar%
+      \bfnoteStar%
+      \bfnoteNoStar%
+}%
+\makeatother
+\newcommand{\bfnoteStar}[1]{$\textbf{[#1]}$}
+\newcommand{\bfnoteNoStar}[1]{\ $\textbf{[#1]}$}
+
+\makeatletter
+\newcommand{\cnote}%
+{%
+   \@ifstar%
+      \cnoteStar%
+      \cnoteNoStar%
+}%
+\makeatother
+\newcommand{\cnoteStar}[2]{${\color{#1}[#2]}$}
+\newcommand{\cnoteNoStar}[2]{${\color{#1}\ [#2]}$}
+
+\makeatletter
+\newcommand{\bnote}%
+{%
+   \@ifstar%
+      \bnoteStar%
+      \bnoteNoStar%
+}%
+\makeatother
+\newcommand{\bnoteStar}[3]{\colorbox{#1}{\!\!\cnote*{#2}{#3}}}
+\newcommand{\bnoteNoStar}[3]{\ \colorbox{#1}{\!\!\cnote*{#2}{#3}}}
+
+\makeatletter
+\newcommand{\pnote}%
+{%
+   \@ifstar%
+      \pnoteStar%
+      \pnoteNoStar%
+}%
+\makeatother
+\newcommand{\pnoteStar}[1]{\begin{classcom}[#1]\end{classcom}}
+\newcommand{\pnoteNoStar}[1]{\begin{classcom}[#1]\end{classcom}}
+
+\def\bcomment#1{\comment{\textbf{#1}}}
+
+\endinput

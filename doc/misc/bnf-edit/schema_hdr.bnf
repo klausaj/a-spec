@@ -1,0 +1,4 @@
+   \bnfelem{schema\_hdr} & ::= & \bnfelem{TOK\_SCH\_START} \bnfelem{sch\_name} \bnfelem{prop} & \\
+                         &     & \bnfelem{decl\_list1} \bnfelem{TOK\_WHERE} \bnfor & \\
+                         &     & \bnfelem{TOK\_SCH\_START} \bnfelem{sch\_name} \bnfelem{decl\_list1} & \\
+                         &     & \bnfelem{TOK\_WHERE} & \\

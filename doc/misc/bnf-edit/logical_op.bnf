@@ -1,0 +1,3 @@
+   \bnfelem{logical\_op} & ::= & \bnfelem{TOK\_IDENT} \bnfelem{pred\_type} \bnfor & \\
+                         &     & \bnfelem{pred\_type} \bnfelem{TOK\_IDENT} \bnfelem{pred\_type} \bnfor & \\
+                         &     & \bnfelem{pred\_type} \bnfelem{TOK\_IDENT} & \\

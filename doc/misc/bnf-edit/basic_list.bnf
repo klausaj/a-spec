@@ -1,0 +1,2 @@
+   \bnfelem{basic\_list} & ::= & \bnfelem{basic\_entry} \bnfor & \\
+                         &     & \bnfelem{basic\_list} \bnfelem{basic\_entry} & \\

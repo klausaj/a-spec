@@ -1,0 +1,2 @@
+   \bnfelem{func\_app} & ::= & \bnfelem{expr} \bnfelem{TOK\_OPAREN} \bnfelem{expr\_list1} & \\
+                       &     & \bnfelem{TOK\_CPAREN} & \\

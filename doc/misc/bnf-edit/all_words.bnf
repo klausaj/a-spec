@@ -1,0 +1,2 @@
+   \bnfelem{all\_words} & ::= & \bnfelem{TOK\_WORD} \bnfor & \\
+                        &     & \bnfelem{TOK\_IDENT} & \\

@@ -1,0 +1,466 @@
+    1 adoc: doc_info paragraphs
+
+    2 doc_info: TOK_INFO_START info_list TOK_INFO_END
+
+    3 info_list: /* empty */
+    4          | info_list info_entry
+
+    5 info_entry: word_list TOK_SEMICOLON
+
+    6 par_id: TOK_IDENT
+
+    7 prop: TOK_PROP_START prop_list TOK_PROP_END
+
+    8 prop_list: prop_entry
+    9          | prop_list prop_entry
+
+   10 prop_entry: word_list TOK_SEMICOLON
+
+   11 text_tokens: all_words
+   12            | TOK_STRING
+   13            | TOK_CHAR
+   14            | TOK_NUMBER
+
+   15 word_list: text_tokens
+   16          | word_list text_tokens
+
+   17 sch_ref: TOK_SCH_NAME
+   18        | TOK_GEN_SCHEMA TOK_OSQUARE expr_list TOK_CSQUARE
+
+   19 sch_pre_decor: TOK_OSQUARE TOK_PRE_DECOR TOK_CSQUARE
+
+   20 sch_post_decor: TOK_OSQUARE TOK_POST_DECOR TOK_CSQUARE
+
+   21 var_ident: TOK_IDENT
+   22          | TOK_VAR_BINDING
+
+   23 var_post_decor: TOK_OSQUARE TOK_POST_DECOR TOK_CSQUARE
+   24               | TOK_OSQUARE TOK_QUEST TOK_CSQUARE
+   25               | TOK_OSQUARE TOK_EXCLAIM TOK_CSQUARE
+
+   26 expr_list2: expr TOK_COMMA expr
+   27           | expr_list2 TOK_COMMA expr
+
+   28 expr_list1: expr
+   29           | expr_list2
+
+   30 expr_list: /* empty */
+   31          | expr_list1
+
+   32 expr: bexp TOK_POUND TOK_OSQUARE post_props TOK_CSQUARE
+   33     | bexp
+
+   34 bexp: tuple
+   35     | bind
+   36     | sch_bind
+   37     | TOK_SNOT expr
+   38     | expr TOK_SOR expr
+   39     | expr TOK_SAND expr
+   40     | TOK_ZPRE expr
+   41     | TOK_ZPOST expr
+   42     | TOK_ZIN expr
+   43     | TOK_ZOUT expr
+   44     | TOK_ZUNP expr
+   45     | TOK_ZTYPE expr
+   46     | expr TOK_ZHIDE expr
+   47     | expr TOK_ZPROJ expr
+   48     | sch_type
+   49     | sch_pre_decor sch_type
+   50     | sch_type sch_post_decor
+   51     | sch_pre_decor sch_type sch_post_decor
+   52     | set_disp
+   53     | expr TOK_UPTO expr
+   54     | seq_disp
+   55     | cross
+   56     | set_comp
+   57     | lambda
+   58     | mu
+   59     | expr TOK_OPAREN expr TOK_CPAREN
+   60     | expr tuple
+   61     | TOK_EXPR_FUNC
+   62     | TOK_GEN_SYM
+   63     | var_ident
+   64     | var_ident var_post_decor
+   65     | TOK_DATA_TYPE
+   66     | TOK_GEN_TYPE expr
+   67     | expr TOK_GEN_TYPE expr
+   68     | expr TOK_PERIOD all_words
+   69     | expr TOK_PERIOD all_words var_post_decor
+   70     | cond_exp
+   71     | expr TOK_EXPON expr
+   72     | TOK_NUMBER
+   73     | TOK_CHAR
+   74     | TOK_STRING
+   75     | TOK_OPAREN expr TOK_CPAREN
+   76     | TOK_P1FPRE expr
+   77     | TOK_P2FPRE expr
+   78     | TOK_P3FPRE expr
+   79     | TOK_P4FPRE expr
+   80     | TOK_P5FPRE expr
+   81     | TOK_P6FPRE expr
+   82     | TOK_P7FPRE expr
+   83     | TOK_PLUS expr
+   84     | TOK_MINUS expr
+   85     | TOK_P8FPRE expr
+   86     | TOK_P9FPRE expr
+   87     | expr TOK_P1FIN expr
+   88     | expr TOK_P2FIN expr
+   89     | expr TOK_P3FIN expr
+   90     | expr TOK_P4FIN expr
+   91     | expr TOK_P5FIN expr
+   92     | expr TOK_PLUS expr
+   93     | expr TOK_MINUS expr
+   94     | expr TOK_P6FIN expr
+   95     | expr TOK_MULT expr
+   96     | expr TOK_P7FIN expr
+   97     | expr TOK_P8FIN expr
+   98     | expr TOK_P9FIN expr
+   99     | expr TOK_P1FPOST
+  100     | expr TOK_P2FPOST
+  101     | expr TOK_P3FPOST
+  102     | expr TOK_P4FPOST
+  103     | expr TOK_P5FPOST
+  104     | expr TOK_P6FPOST
+  105     | expr TOK_P7FPOST
+  106     | expr TOK_P8FPOST
+  107     | expr TOK_P9FPOST
+
+  108 tuple: TOK_OPAREN expr_list2 TOK_CPAREN
+
+  109 set_disp: TOK_SET_DISP TOK_OCURLY expr_list TOK_CCURLY
+
+  110 seq_disp: TOK_SEQ_DISP TOK_OCURLY expr_list1 TOK_CCURLY
+  111         | TOK_SEQ_DISP TOK_OCURLY TOK_CCURLY
+
+  112 cross: TOK_CROSS TOK_OCURLY expr_list TOK_CCURLY
+
+  113 set_comp: TOK_SET_COMP TOK_OCURLY decl_list TOK_QUEST pred_list0 TOK_AT expr TOK_CCURLY
+
+  114 lambda: TOK_LAMBDA TOK_OCURLY decl_list TOK_QUEST pred_list0 TOK_AT expr TOK_CCURLY
+
+  115 mu: TOK_MU TOK_OCURLY decl_list TOK_QUEST pred_list0 TOK_AT expr TOK_CCURLY
+
+  116 sch_type: TOK_SCH_TYPE TOK_OCURLY decl_list TOK_QUEST pred_list0 TOK_CCURLY
+  117         | TOK_SCH_TYPE TOK_OCURLY decl_list TOK_CCURLY
+  118         | sch_ref
+
+  119 sch_bind: TOK_SCH_BIND TOK_OCURLY bind_list TOK_CCURLY
+
+  120 bind_list: bind_entry
+  121          | bind_list bind_entry
+
+  122 bind_entry: var_ident TOK_EQUALS expr TOK_SEMICOLON
+  123           | var_ident var_post_decor TOK_EQUALS expr TOK_SEMICOLON
+
+  124 bind: TOK_MULT expr
+
+  125 cond_exp: TOK_IF pred_list TOK_THEN expr TOK_ENDIF
+  126         | TOK_IF pred_list TOK_THEN expr TOK_ELIF elif_exp
+  127         | TOK_IF pred_list TOK_THEN expr TOK_ELSE expr TOK_ENDIF
+  128         | TOK_IF pred_type TOK_THEN expr TOK_ENDIF
+  129         | TOK_IF pred_type TOK_THEN expr TOK_ELIF elif_exp
+  130         | TOK_IF pred_type TOK_THEN expr TOK_ELSE expr TOK_ENDIF
+
+  131 elif_exp: pred_list TOK_THEN expr TOK_ENDIF
+  132         | pred_list TOK_THEN expr TOK_ELIF elif_exp
+  133         | pred_list TOK_THEN expr TOK_ELSE expr TOK_ENDIF
+  134         | pred_type TOK_THEN expr TOK_ENDIF
+  135         | pred_type TOK_THEN expr TOK_ELIF elif_exp
+  136         | pred_type TOK_THEN expr TOK_ELSE expr TOK_ENDIF
+
+  137 decl_list: /* empty */
+  138          | decl_list decl_entry
+
+  139 decl_list1: decl_entry
+  140           | decl_list1 decl_entry
+
+  141 decl_entry: decl_type TOK_SEMICOLON
+  142           | decl_type TOK_SEMICOLON TOK_POUND TOK_OSQUARE post_props TOK_CSQUARE
+
+  143 decl_type: dsch_ref
+  144          | var_decl
+  145          | func_decl
+  146          | op_decl
+
+  147 post_props: post_prop
+  148           | post_props TOK_COMMA post_prop
+
+  149 post_prop: word_list
+
+  150 dsch_ref: sch_type
+  151         | sch_pre_decor sch_type
+  152         | sch_type sch_post_decor
+  153         | sch_pre_decor sch_type sch_post_decor
+
+  154 var_decl: var_ident TOK_COLON expr
+  155         | var_ident var_post_decor TOK_COLON expr
+
+  156 func_decl: TOK_BOOL_ID TOK_IDENT TOK_COLON expr
+  157          | TOK_FUNC_ID TOK_IDENT TOK_COLON expr
+
+  158 op_decl: TOK_REL_ID TOK_OP_TYPE TOK_IDENT TOK_COLON expr
+  159        | TOK_OPER_ID TOK_OP_TYPE TOK_IDENT TOK_COLON expr
+
+  160 pred: pred_list0
+
+  161 pred_list0: /* empty */
+  162           | pred_list
+  163           | pred_type
+
+  164 pred_list: pred_entry
+  165          | pred_list pred_entry
+
+  166 pred_entry: pred_type TOK_SEMICOLON
+  167           | pred_type TOK_SEMICOLON TOK_POUND TOK_OSQUARE post_props TOK_CSQUARE
+
+  168 pred_type: quantifier
+  169          | TOK_OCURLY expr TOK_CCURLY expr TOK_OCURLY expr TOK_CCURLY
+  170          | TOK_OCURLY expr TOK_CCURLY TOK_ZXI TOK_OCURLY expr TOK_CCURLY
+  171          | TOK_PRED_FUNC TOK_OPAREN expr TOK_CPAREN
+  172          | TOK_PRED_FUNC tuple
+  173          | cond_pred
+  174          | TOK_OPAREN pred_type TOK_CPAREN
+  175          | TOK_TRUE
+  176          | TOK_FALSE
+  177          | TOK_P1RPRE expr
+  178          | TOK_P2RPRE expr
+  179          | TOK_P3RPRE expr
+  180          | TOK_P4RPRE expr
+  181          | TOK_P5RPRE expr
+  182          | TOK_P6RPRE expr
+  183          | TOK_P7RPRE expr
+  184          | TOK_P8RPRE expr
+  185          | TOK_P9RPRE expr
+  186          | expr TOK_P1RIN expr
+  187          | expr TOK_P2RIN expr
+  188          | expr TOK_P3RIN expr
+  189          | expr TOK_P4RIN expr
+  190          | expr TOK_EQUALS expr
+  191          | expr TOK_P5RIN expr
+  192          | expr TOK_P6RIN expr
+  193          | expr TOK_P7RIN expr
+  194          | expr TOK_P8RIN expr
+  195          | expr TOK_P9RIN expr
+  196          | expr TOK_P1RPOST
+  197          | expr TOK_P2RPOST
+  198          | expr TOK_P3RPOST
+  199          | expr TOK_P4RPOST
+  200          | expr TOK_P5RPOST
+  201          | expr TOK_P6RPOST
+  202          | expr TOK_P7RPOST
+  203          | expr TOK_P8RPOST
+  204          | expr TOK_P9RPOST
+  205          | TOK_P1LPRE pred_type
+  206          | TOK_P2LPRE pred_type
+  207          | TOK_P3LPRE pred_type
+  208          | TOK_P4LPRE pred_type
+  209          | TOK_P5LPRE pred_type
+  210          | TOK_P6LPRE pred_type
+  211          | TOK_P7LPRE pred_type
+  212          | TOK_P8LPRE pred_type
+  213          | TOK_P9LPRE pred_type
+  214          | pred_type TOK_P1LIN pred_type
+  215          | pred_type TOK_P2LIN pred_type
+  216          | pred_type TOK_P3LIN pred_type
+  217          | pred_type TOK_P4LIN pred_type
+  218          | pred_type TOK_P5LIN pred_type
+  219          | pred_type TOK_P6LIN pred_type
+  220          | pred_type TOK_P7LIN pred_type
+  221          | pred_type TOK_P8LIN pred_type
+  222          | pred_type TOK_P9LIN pred_type
+  223          | pred_type TOK_P1LPOST
+  224          | pred_type TOK_P2LPOST
+  225          | pred_type TOK_P3LPOST
+  226          | pred_type TOK_P4LPOST
+  227          | pred_type TOK_P5LPOST
+  228          | pred_type TOK_P6LPOST
+  229          | pred_type TOK_P7LPOST
+  230          | pred_type TOK_P8LPOST
+  231          | pred_type TOK_P9LPOST
+  232          | pred_type TOK_IMPLIES pred_type
+  233          | pred_type TOK_EQUIV pred_type
+  234          | pred_type TOK_LOR pred_type
+  235          | pred_type TOK_LAND pred_type
+  236          | TOK_EXCLAIM pred_type
+
+  237 quantifier: all_quant
+  238           | exist_quant
+  239           | uniq_quant
+
+  240 all_quant: TOK_ALL TOK_OCURLY decl_list1 TOK_QUEST pred_list0 TOK_AT pred_list0 TOK_CCURLY
+
+  241 exist_quant: TOK_EXIST TOK_OCURLY decl_list1 TOK_QUEST pred_list0 TOK_AT pred_list0 TOK_CCURLY
+
+  242 uniq_quant: TOK_UNIQ TOK_OCURLY decl_list1 TOK_QUEST pred_list0 TOK_AT pred_list0 TOK_CCURLY
+
+  243 cond_pred: TOK_IF pred_list TOK_THEN pred_list TOK_ENDIF
+  244          | TOK_IF pred_list TOK_THEN pred_list TOK_ELIF elif_pred
+  245          | TOK_IF pred_list TOK_THEN pred_list TOK_ELSE pred_list TOK_ENDIF
+  246          | TOK_IF pred_type TOK_THEN pred_list TOK_ENDIF
+  247          | TOK_IF pred_type TOK_THEN pred_list TOK_ELIF elif_pred
+  248          | TOK_IF pred_type TOK_THEN pred_list TOK_ELSE pred_list TOK_ENDIF
+
+  249 elif_pred: pred_list TOK_THEN pred_list TOK_ENDIF
+  250          | pred_list TOK_THEN pred_list TOK_ELIF elif_pred
+  251          | pred_list TOK_THEN pred_list TOK_ELSE pred_list TOK_ENDIF
+  252          | pred_type TOK_THEN pred_list TOK_ENDIF
+  253          | pred_type TOK_THEN pred_list TOK_ELIF elif_pred
+  254          | pred_type TOK_THEN pred_list TOK_ELSE pred_list TOK_ENDIF
+
+  255 paragraphs: /* empty */
+  256           | paragraphs paragraph
+
+  257 paragraph: doc_info
+  258          | schema
+  259          | basic
+  260          | type
+  261          | free
+  262          | axdef
+  263          | const
+  264          | gendef
+  265          | gensch
+  266          | desc
+  267          | direc
+  268          | error TOK_BLOCK_END
+
+  269 schema_hdr: TOK_SCH_START sch_name prop decl_list1 TOK_WHERE
+  270           | TOK_SCH_START sch_name decl_list1 TOK_WHERE
+
+  271 schema: schema_hdr pred TOK_BLOCK_END
+
+  272 sch_name: TOK_IDENT
+
+  273 basic: TOK_BASIC_START par_id prop basic_list TOK_BLOCK_END
+  274      | TOK_BASIC_START par_id basic_list TOK_BLOCK_END
+
+  275 basic_list: basic_entry
+  276           | basic_list basic_entry
+
+  277 basic_entry: TOK_IDENT TOK_SEMICOLON
+  278            | TOK_IDENT TOK_SEMICOLON TOK_POUND TOK_OSQUARE post_props TOK_CSQUARE
+
+  279 type: TOK_TYPE_START par_id prop type_list TOK_BLOCK_END
+  280     | TOK_TYPE_START par_id type_list TOK_BLOCK_END
+
+  281 type_list: type_entry
+  282          | type_list type_entry
+
+  283 type_entry: type_decl TOK_SEMICOLON
+  284           | type_decl TOK_SEMICOLON TOK_POUND TOK_OSQUARE post_props TOK_CSQUARE
+
+  285 type_decl: TOK_IDENT TOK_EQUALS expr
+  286          | TOK_IDENT gen_term TOK_EQUALS expr
+  287          | gen_term TOK_IDENT gen_term TOK_EQUALS expr
+
+  288 gen_term: TOK_OSQUARE TOK_IDENT TOK_CSQUARE
+
+  289 free: TOK_FREE_START par_id prop free_list TOK_BLOCK_END
+  290     | TOK_FREE_START par_id free_list TOK_BLOCK_END
+
+  291 free_list: free_entry
+  292          | free_list free_entry
+
+  293 free_entry: free_decl TOK_SEMICOLON
+  294           | free_decl TOK_SEMICOLON TOK_POUND TOK_OSQUARE post_props TOK_CSQUARE
+
+  295 free_decl: TOK_IDENT TOK_EQUALS free_vars
+
+  296 free_vars: free_var
+  297          | free_vars TOK_SOR free_var
+
+  298 free_var: TOK_IDENT TOK_POUND TOK_OSQUARE post_props TOK_CSQUARE
+  299         | TOK_IDENT
+
+  300 axdef: TOK_AXDEF_START par_id prop decl_list1 TOK_WHERE pred TOK_BLOCK_END
+  301      | TOK_AXDEF_START par_id decl_list1 TOK_WHERE pred TOK_BLOCK_END
+
+  302 const: TOK_CONST_START par_id prop pred TOK_BLOCK_END
+  303      | TOK_CONST_START par_id pred TOK_BLOCK_END
+
+  304 gen_field: TOK_OSQUARE gen_list TOK_CSQUARE
+
+  305 gen_list: TOK_IDENT
+  306         | gen_list TOK_COMMA TOK_IDENT
+
+  307 gendef: TOK_GENDEF_START gen_field par_id prop decl_list1 TOK_WHERE pred TOK_BLOCK_END
+  308       | TOK_GENDEF_START gen_field par_id decl_list1 TOK_WHERE pred TOK_BLOCK_END
+
+  309 gensch_hdr: TOK_GENSCH_START gen_field sch_name prop decl_list1 TOK_WHERE
+  310           | TOK_GENSCH_START gen_field sch_name decl_list1 TOK_WHERE
+
+  311 gensch: gensch_hdr pred TOK_BLOCK_END
+
+  312 desc: TOK_DESC_START prop TOK_TEXT TOK_DESC_END
+  313     | TOK_DESC_START TOK_TEXT TOK_DESC_END
+
+  314 direc: TOK_DIREC_START prop dir_list TOK_DIREC_END
+  315      | TOK_DIREC_START dir_list TOK_DIREC_END
+
+  316 dir_list: dir_entry TOK_SEMICOLON
+  317         | dir_list dir_entry TOK_SEMICOLON
+
+  318 dir_entry: word_list
+
+  319 all_words: TOK_WORD
+  320          | TOK_IDENT
+  321          | TOK_GEN_SYM
+  322          | TOK_VAR_BINDING
+  323          | TOK_DATA_TYPE
+  324          | TOK_SCH_NAME
+  325          | TOK_GEN_SCHEMA
+  326          | TOK_EXPR_FUNC
+  327          | TOK_PRED_FUNC
+  328          | TOK_P1FPRE
+  329          | TOK_P2FPRE
+  330          | TOK_P3FPRE
+  331          | TOK_P4FPRE
+  332          | TOK_P5FPRE
+  333          | TOK_P6FPRE
+  334          | TOK_P7FPRE
+  335          | TOK_P8FPRE
+  336          | TOK_P9FPRE
+  337          | TOK_P1FIN
+  338          | TOK_P2FIN
+  339          | TOK_P3FIN
+  340          | TOK_P4FIN
+  341          | TOK_P5FIN
+  342          | TOK_P6FIN
+  343          | TOK_P7FIN
+  344          | TOK_P8FIN
+  345          | TOK_P9FIN
+  346          | TOK_P1FPOST
+  347          | TOK_P2FPOST
+  348          | TOK_P3FPOST
+  349          | TOK_P4FPOST
+  350          | TOK_P5FPOST
+  351          | TOK_P6FPOST
+  352          | TOK_P7FPOST
+  353          | TOK_P8FPOST
+  354          | TOK_P9FPOST
+  355          | TOK_P1RPRE
+  356          | TOK_P2RPRE
+  357          | TOK_P3RPRE
+  358          | TOK_P4RPRE
+  359          | TOK_P5RPRE
+  360          | TOK_P6RPRE
+  361          | TOK_P7RPRE
+  362          | TOK_P8RPRE
+  363          | TOK_P9RPRE
+  364          | TOK_P1RIN
+  365          | TOK_P2RIN
+  366          | TOK_P3RIN
+  367          | TOK_P4RIN
+  368          | TOK_P5RIN
+  369          | TOK_P6RIN
+  370          | TOK_P7RIN
+  371          | TOK_P8RIN
+  372          | TOK_P9RIN
+  373          | TOK_P1RPOST
+  374          | TOK_P2RPOST
+  375          | TOK_P3RPOST
+  376          | TOK_P4RPOST
+  377          | TOK_P5RPOST
+  378          | TOK_P6RPOST
+  379          | TOK_P7RPOST
+  380          | TOK_P8RPOST
+  381          | TOK_P9RPOST

@@ -1,0 +1,3 @@
+   \bnfelem{free\_var} & ::= & \bnfelem{TOK\_IDENT} \bnfelem{TOK\_POUND} \bnfelem{TOK\_OSQUARE} & \\
+                       &     & \bnfelem{post\_props} \bnfelem{TOK\_CSQUARE} \bnfor & \\
+                       &     & \bnfelem{TOK\_IDENT} & \\

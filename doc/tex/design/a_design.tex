@@ -1,0 +1,124 @@
+\documentclass[letterpaper,10pt,draft]{article}
+
+\usepackage{oz}
+\usepackage{bnf}
+\usepackage{fancyhdr}
+\usepackage{a_style}
+\usepackage{lex_yacc}
+
+\pagestyle{plain}
+
+\textwidth 7.5in
+\textheight 10in
+\evensidemargin .5in
+\headheight .5in
+\headsep 0in
+\footskip .5in
+\oddsidemargin .5in
+\voffset -1in
+\hoffset -1in
+
+\begin{document}
+
+\raggedright
+\raggedbottom
+
+\parindent=0in
+
+\csname aTextColor\endcsname
+
+\section{Purpose}
+   \label{sect:Purpose}
+
+\begin{itemize}
+   \item Specify a design for processing A-Spec documents
+      \subitem Shall be able to parse A-Spec grammar
+      \subitem Shall be able to dynamically include A-Spec design packages (i.e. mem, thread, etc . . .)
+      \subitem Shall be able to provide callbacks to included packages for each design element
+      \subitem Shall be able to convert A-Spec document to Z Notation output
+      \subitem Shall be able to include generated derivatives in output
+\end{itemize}
+
+\section{Data Dictionary}
+   \label{sect:DataDict}
+
+\begin{zed}
+   \typedef{UINT8}{\setof{x: \nat | x < 2^{8} @ x}} \\
+   \typedef{CHAR}{\setof{0x0A, 0x0D, 0x20 .. 0x7E}} \\
+   \typedef{SYMBOL}{\setof{0x21 .. 0x2F, 0x3A .. 0x40, 0x5B .. 0x60, 0x7B .. 0x7E}} \\
+   \typedef{NUMERIC}{\setof{0x30 .. 0x39}} \\
+   \typedef{ALPHA}{\setof{0x41 .. 0x5A, 0x61 .. 0x7A}} \\
+\end{zed}
+
+\begin{axdef}
+   LF, CR, SPACE: CHAR \\
+   ESC\_CHAR, APOSTROPHE, PIPE, AT: CHAR \\
+   COMMA, PERIOD, EXCLAIM, QUEST, COLON, SEMI\_COLON, UNDERSCORE: CHAR \\
+   OPAREN, CPAREN, OSQUARE, CSQUARE, OCURLY, CCURLY: CHAR \\
+   EQUALS: CHAR \\
+   TAG\_START, TAG\_END, TAG\_TERM: CHAR \\
+\where
+   LF = 0x0A \\
+   CR = 0x0D \\
+   SPACE = 0x20 \\
+   ESC\_CHAR = 0x5C \\
+   APOSTROPHE = 0x2C \\
+   PIPE = 0x7C \\
+   AT = 0x40 \\
+   COMMA = 0x2C \\
+   PERIOD = 0x2E \\
+   EXCLAIM = 0x21 \\
+   QUEST = 0x3F \\
+   COLON = 0x3A \\
+   SEMI\_COLON = 0x3B \\
+   UNDERSCORE = 0x5F \\
+   OPAREN = 0x28 \\
+   CPAREN = 0x29 \\
+   OSQUARE = 0x5B \\
+   CSQUARE = 0x5D \\
+   OCURLY = 0x7B \\
+   CCURLY = 0x7D \\
+   EQUALS = 0x3D \\
+   TAG\_START = 0x3C \\
+   TAG\_END = 0x3E \\
+   TAG\_TERM = 0x2F \\
+\end{axdef}
+
+\begin{zed}
+   \typedef{EOL}{\setof{LF, CR}} \\
+   \typedef{WS}{\setof{SPACE} \union EOL} \\
+   \typedef{WORD\_SYMBOLS}{\setof{ESC\_CHAR, UNDERSCORE, QUEST, EXCLAIM, OCURLY, \\
+                                  CCURLY, APOSTROPHE}} \\
+   \typedef{WORD\_CHARS}{ALPHA \union NUMERIC \union WORD\_SYMBOLS} \\
+   \typedef{WORD}{\seq WORD\_CHARS} \\
+   \typedef{IDENT}{WORD} \\
+   \typedef{TAG\_CHARS}{ALPHA \union NUMERIC \union \setof{UNDERSCORE}} \\
+   \typedef{TAG\_WORD}{\seq TAG\_CHARS} \\
+   \typedef{TOKEN}{\seq CHAR} \\
+\end{zed}
+
+\section{$lex$ Grammar}
+   \label{sect:lex}
+
+\lextable
+{
+   \lexgroup{a-zA-Z\bs\bs0-9\_?!\{\}'}+                                          & WORD     \\
+   \bs $<$\lexgroup{a-zA-Z0-9\_}\bs $>$                                          & TAGSTART \\ 
+   \bs $<$\lexgroup{/a-zA-Z0-9\_}\bs $>$                                         & TAGEND   \\
+   \lexgroup{0-9}+                                                               & NUMBER   \\
+   \lexgroup{-`\~\ !@\#\$\%\bs\^\ \&*()\_=+\bs[\{\bs]\}\bs\bs$|$';:",$<$.$>$/?}+ & SYMBOL   \\
+}
+
+\section{$yacc$ Grammar}
+   \label{sect:yacc}
+\section{Change Log}
+   \label{sect:Change}
+
+\paragraph{V1.0a}
+
+\begin{itemize}
+   \item ??/??/09
+      \subitem Initial Release
+\end{itemize}
+
+\end{document}

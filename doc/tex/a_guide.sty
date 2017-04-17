@@ -1,0 +1,112 @@
+\pagestyle{plain}
+
+\RequirePackage[usenames]{color}    %For filled boxes & color names
+
+\textwidth 6.5in
+\textheight 10in
+\evensidemargin 1in
+\headheight .5in
+\headsep 0in
+\footskip .5in
+\oddsidemargin 1in
+\voffset -1in
+\hoffset -1in
+
+\newcommand{\chref}[1]%
+{%
+   \textbf{\textit{Chapter \ref{#1}}}%
+}%
+
+\newcommand{\sectref}[1]%
+{%
+   \textbf{\textit{Section \ref{#1}}}%
+}%
+
+\newcommand{\figref}[1]%
+{%
+   \textbf{\textit{Figure \ref{#1}}}%
+}%
+
+\newcommand{\exref}[1]%
+{%
+   \textbf{\textit{Example \ref{#1}}}%
+}%
+
+\definecolor{agGray25}{gray}{0.75}
+\newlength{\agTitleBarLength}
+\setlength{\agTitleBarLength}{\textwidth}
+\addtolength{\agTitleBarLength}{-6.0pt}        %from output log...
+\newcommand{\agTitleBar}[1]{%
+        \noindent\colorbox{agGray25}{%
+                \begin{minipage}[c]{\agTitleBarLength}%
+                        \begin{center}\textbf{#1}\end{center}%
+                \end{minipage}%
+        }%
+}
+
+\renewcommand\paragraph%
+{%
+   \@startsection%
+      {paragraph}%
+      {4}%
+      {\z@}%
+      {3.25ex \@plus1ex \@minus.2ex}%
+      {1.25ex \@plus .2ex}%  article was {-1em}%
+      {\normalfont\normalsize\bfseries}%
+}%
+
+\renewcommand\subparagraph%
+{%
+   \@startsection%
+      {subparagraph}%
+      {5}%
+      {\z@}% article was \parindent
+      {3.25ex \@plus1ex \@minus .2ex}%
+      {1ex \@plus .2ex}% article was {-1em}%
+      {\normalfont\normalsize\itshape\bfseries}%
+}%
+
+\renewcommand\tableofcontents{%
+    \addcontentsline{toc}{section}{Table of Contents}
+    \agTitleBar{Table of Contents}
+    \vspace{\parskip}
+
+    \@starttoc{toc}
+    \newpage
+}
+
+\newcommand{\listofexamples}{%
+    \addcontentsline{toc}{chapter}{List of Examples}
+    \agTitleBar{List of Examples}
+    \vspace{\parskip}
+    \@starttoc{loe}
+    \newpage
+}
+
+
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{3}
+
+\floatstyle{ruled}
+\newfloat{example}{H}{loe}
+\floatname{example}{Example}
+
+\zedindent=.25in
+
+\newcommand{\azed}
+{%
+   \vspace{-16.5pt}%
+}%
+
+\newcommand{\azbox}
+{%
+   \vspace{-15pt}%
+}%
+
+\newcommand{\azsch}
+{%
+   \vspace{-16pt}%
+}%
+
+\renewcommand{\thefootnote}{[\arabic{footnote}]}

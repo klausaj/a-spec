@@ -1,0 +1,4 @@
+   \bnfelem{basic\_entry} & ::= & \bnfelem{TOK\_IDENT} \bnfelem{TOK\_SEMICOLON} \bnfor & \\
+                          &     & \bnfelem{TOK\_IDENT} \bnfelem{TOK\_SEMICOLON} & \\
+                          &     & \bnfelem{TOK\_POUND} \bnfelem{TOK\_OSQUARE} \bnfelem{post\_props} & \\
+                          &     & \bnfelem{TOK\_CSQUARE} & \\

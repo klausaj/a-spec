@@ -1,0 +1,2 @@
+   \bnfelem{var\_exp} & ::= & \bnfelem{TOK\_IDENT} \bnfor \\
+                      &     & \bnfelem{TOK\_IDENT} \bnfelem{var\_post\_decor} & \\

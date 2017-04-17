@@ -1,0 +1,3 @@
+   \bnfelem{sch\_ref} & ::= & \bnfelem{TOK\_IDENT} \bnfor & \\
+                      &     & \bnfelem{TOK\_IDENT} \bnfelem{TOK\_OSQUARE} & \\
+                      &     & \bnfelem{expr\_list} \bnfelem{TOK\_CSQUARE} & \\

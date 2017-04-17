@@ -1,0 +1,15 @@
+   \bnfelem{bexp} & ::= & \bnfelem{var\_exp} \bnfor \\
+                  &     & \bnfelem{op\_exp} \bnfor \\
+                  &     & \bnfelem{func\_app} \bnfor & \\
+                  &     & \bnfelem{literal\_exp} \bnfor \\
+                  &     & \bnfelem{tuple} \bnfor & \\
+                  &     & \bnfelem{cross} \bnfor & \\
+                  &     & \bnfelem{set\_disp} \bnfor & \\
+                  &     & \bnfelem{seq\_disp} \bnfor & \\
+                  &     & \bnfelem{sch\_ref\_exp} \bnfor & \\
+                  &     & \bnfelem{sch\_bind} \bnfor & \\
+                  &     & \bnfelem{set\_comp} \bnfor & \\
+                  &     & \bnfelem{lambda} \bnfor & \\
+                  &     & \bnfelem{mu} \bnfor & \\
+                  &     & \bnfelem{cond\_exp} \bnfor & \\
+                  &     & \bnfelem{TOK\_OPAREN} \bnfelem{expr} \bnfelem{TOK\_CPAREN} & \\

@@ -1,0 +1,1 @@
+   \bnfelem{text} & ::= & \bnfelem{TOK\_TEXT\_START} \bnfelem{TOK\_TEXT} \bnfelem{TOK\_TEXT\_END} & \\

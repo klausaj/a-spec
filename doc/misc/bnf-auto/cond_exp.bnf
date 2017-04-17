@@ -1,0 +1,14 @@
+   \bnfelem{cond\_exp} & ::= & \bnfelem{TOK\_IF} \bnfelem{pred\_list} \bnfelem{TOK\_THEN} & \\
+                       &     & \bnfelem{expr} \bnfelem{TOK\_ENDIF} \bnfor & \\
+                       &     & \bnfelem{TOK\_IF} \bnfelem{pred\_list} \bnfelem{TOK\_THEN} & \\
+                       &     & \bnfelem{expr} \bnfelem{TOK\_ELIF} \bnfelem{elif\_exp} \bnfor & \\
+                       &     & \bnfelem{TOK\_IF} \bnfelem{pred\_list} \bnfelem{TOK\_THEN} & \\
+                       &     & \bnfelem{expr} \bnfelem{TOK\_ELSE} \bnfelem{expr} & \\
+                       &     & \bnfelem{TOK\_ENDIF} \bnfor & \\
+                       &     & \bnfelem{TOK\_IF} \bnfelem{pred\_type} \bnfelem{TOK\_THEN} & \\
+                       &     & \bnfelem{expr} \bnfelem{TOK\_ENDIF} \bnfor & \\
+                       &     & \bnfelem{TOK\_IF} \bnfelem{pred\_type} \bnfelem{TOK\_THEN} & \\
+                       &     & \bnfelem{expr} \bnfelem{TOK\_ELIF} \bnfelem{elif\_exp} \bnfor & \\
+                       &     & \bnfelem{TOK\_IF} \bnfelem{pred\_type} \bnfelem{TOK\_THEN} & \\
+                       &     & \bnfelem{expr} \bnfelem{TOK\_ELSE} \bnfelem{expr} & \\
+                       &     & \bnfelem{TOK\_ENDIF} & \\

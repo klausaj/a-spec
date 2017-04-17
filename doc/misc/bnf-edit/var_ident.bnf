@@ -1,0 +1,2 @@
+   \bnfelem{var\_ident} & ::= & \bnfelem{TOK\_IDENT} \bnfor & \\
+                        &     & \bnfelem{TOK\_VAR\_BINDING} & \\

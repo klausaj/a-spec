@@ -1,0 +1,5 @@
+   \bnfelem{sch\_type} & ::= & \bnfelem{TOK\_SCH\_TYPE} \bnfelem{TOK\_OCURLY} \bnfelem{decl\_list} & \\
+                       &     & \bnfelem{TOK\_QUEST} \bnfelem{pred\_list0} \bnfelem{TOK\_CCURLY} \bnfor & \\
+                       &     & \bnfelem{TOK\_SCH\_TYPE} \bnfelem{TOK\_OCURLY} \bnfelem{decl\_list} & \\
+                       &     & \bnfelem{TOK\_CCURLY} \bnfor & \\
+                       &     & \bnfelem{sch\_ref} & \\

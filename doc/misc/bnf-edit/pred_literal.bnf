@@ -1,0 +1,2 @@
+   \bnfelem{pred\_literal} & ::= & \bnfelem{TOK\_TRUE} \bnfor & \\
+                           &     & \bnfelem{TOK\_FALSE} & \\

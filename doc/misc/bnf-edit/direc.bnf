@@ -1,0 +1,3 @@
+   \bnfelem{direc} & ::= & \bnfelem{TOK\_DIREC\_START} \bnfelem{prop} \bnfelem{dir\_list} & \\
+                   &     & \bnfelem{TOK\_DIREC\_END} \bnfor & \\
+                   &     & \bnfelem{TOK\_DIREC\_START} \bnfelem{dir\_list} \bnfelem{TOK\_DIREC\_END} & \\

@@ -1,0 +1,4 @@
+   \bnfelem{dsch\_ref} & ::= & \bnfelem{sch\_type} \bnfor & \\
+                       &     & \bnfelem{sch\_pre\_decor} \bnfelem{sch\_type} \bnfor & \\
+                       &     & \bnfelem{sch\_type} \bnfelem{sch\_post\_decor} \bnfor & \\
+                       &     & \bnfelem{sch\_pre\_decor} \bnfelem{sch\_type} \bnfelem{sch\_post\_decor} & \\

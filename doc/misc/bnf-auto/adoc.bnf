@@ -1,0 +1,1 @@
+   \bnfelem{adoc} & ::= & \bnfelem{doc\_info} \bnfelem{paragraphs} & \\

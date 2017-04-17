@@ -1,0 +1,3 @@
+   \bnfelem{expr} & ::= & \bnfelem{bexp} \bnfelem{TOK\_POUND} \bnfelem{TOK\_OSQUARE} & \\
+                  &     & \bnfelem{post\_props} \bnfelem{TOK\_CSQUARE} \bnfor & \\
+                  &     & \bnfelem{bexp} & \\

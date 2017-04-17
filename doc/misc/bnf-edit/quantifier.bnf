@@ -1,0 +1,3 @@
+   \bnfelem{quantifier} & ::= & \bnfelem{all\_quant} \bnfor & \\
+                        &     & \bnfelem{exist\_quant} \bnfor & \\
+                        &     & \bnfelem{uniq\_quant} & \\

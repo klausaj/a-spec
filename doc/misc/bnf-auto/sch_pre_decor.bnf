@@ -1,0 +1,2 @@
+   \bnfelem{sch\_pre\_decor} & ::= & \bnfelem{TOK\_OSQUARE} \bnfelem{TOK\_PRE\_DECOR} & \\
+                             &     & \bnfelem{TOK\_CSQUARE} & \\

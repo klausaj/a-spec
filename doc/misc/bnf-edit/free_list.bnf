@@ -1,0 +1,2 @@
+   \bnfelem{free\_list} & ::= & \bnfelem{free\_entry} \bnfor & \\
+                        &     & \bnfelem{free\_list} \bnfelem{free\_entry} & \\

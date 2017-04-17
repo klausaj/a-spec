@@ -1,0 +1,1 @@
+   \bnfelem{sch\_name} & ::= & \bnfelem{TOK\_IDENT} & \\

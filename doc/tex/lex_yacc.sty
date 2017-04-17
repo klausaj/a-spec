@@ -1,0 +1,20 @@
+\ProvidesPackage{lex_yacc}
+
+\newcommand{\lextable}[1]%
+{%
+   \begin{tabular}%
+      {@{\extracolsep{\fill}} l l}%
+      #1%
+   \end{tabular}%
+   \smallskip%
+}%
+
+\newcommand{\lexor}%
+{%
+   $|$%
+}%
+
+\newcommand{\lexgroup}[1]%
+{%
+   $[$#1$]$%
+}%

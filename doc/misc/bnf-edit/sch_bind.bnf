@@ -1,0 +1,2 @@
+   \bnfelem{sch\_bind} & ::= & \bnfelem{TOK\_SCH\_BIND} \bnfelem{TOK\_OCURLY} \bnfelem{bind\_list} & \\
+                       &     & \bnfelem{TOK\_CCURLY} & \\

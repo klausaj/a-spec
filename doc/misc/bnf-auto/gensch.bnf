@@ -1,0 +1,1 @@
+   \bnfelem{gensch} & ::= & \bnfelem{gensch\_hdr} \bnfelem{pred} \bnfelem{TOK\_BLOCK\_END} & \\

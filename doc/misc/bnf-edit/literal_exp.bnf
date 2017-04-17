@@ -1,0 +1,3 @@
+   \bnfelem{literal\_exp} & ::= & \bnfelem{TOK\_NUMBER} \bnfor & \\
+                          &     & \bnfelem{TOK\_CHAR} \bnfor & \\
+                          &     & \bnfelem{TOK\_STRING} & \\

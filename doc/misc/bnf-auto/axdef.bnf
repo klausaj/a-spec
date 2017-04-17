@@ -1,0 +1,5 @@
+   \bnfelem{axdef} & ::= & \bnfelem{TOK\_AXDEF\_START} \bnfelem{par\_id} \bnfelem{prop} & \\
+                   &     & \bnfelem{decl\_list1} \bnfelem{TOK\_WHERE} \bnfelem{pred} & \\
+                   &     & \bnfelem{TOK\_BLOCK\_END} \bnfor & \\
+                   &     & \bnfelem{TOK\_AXDEF\_START} \bnfelem{par\_id} \bnfelem{decl\_list1} & \\
+                   &     & \bnfelem{TOK\_WHERE} \bnfelem{pred} \bnfelem{TOK\_BLOCK\_END} & \\

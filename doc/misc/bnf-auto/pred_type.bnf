@@ -1,0 +1,74 @@
+   \bnfelem{pred\_type} & ::= & \bnfelem{quantifier} \bnfor & \\
+                        &     & \bnfelem{TOK\_OCURLY} \bnfelem{expr} \bnfelem{TOK\_CCURLY} & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_OCURLY} \bnfelem{expr} & \\
+                        &     & \bnfelem{TOK\_CCURLY} \bnfor & \\
+                        &     & \bnfelem{TOK\_OCURLY} \bnfelem{expr} \bnfelem{TOK\_CCURLY} & \\
+                        &     & \bnfelem{TOK\_ZXI} \bnfelem{TOK\_OCURLY} \bnfelem{expr} & \\
+                        &     & \bnfelem{TOK\_CCURLY} \bnfor & \\
+                        &     & \bnfelem{TOK\_PRED\_FUNC} \bnfelem{TOK\_OPAREN} & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_CPAREN} \bnfor & \\
+                        &     & \bnfelem{TOK\_PRED\_FUNC} \bnfelem{tuple} \bnfor & \\
+                        &     & \bnfelem{cond\_pred} \bnfor & \\
+                        &     & \bnfelem{TOK\_OPAREN} \bnfelem{pred\_type} \bnfelem{TOK\_CPAREN} \bnfor & \\
+                        &     & \bnfelem{TOK\_TRUE} \bnfor & \\
+                        &     & \bnfelem{TOK\_FALSE} \bnfor & \\
+                        &     & \bnfelem{TOK\_P1RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_P2RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_P3RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_P4RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_P5RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_P6RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_P7RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_P8RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{TOK\_P9RPRE} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P1RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P2RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P3RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P4RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_EQUALS} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P5RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P6RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P7RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P8RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P9RIN} \bnfelem{expr} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P1RPOST} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P2RPOST} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P3RPOST} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P4RPOST} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P5RPOST} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P6RPOST} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P7RPOST} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P8RPOST} \bnfor & \\
+                        &     & \bnfelem{expr} \bnfelem{TOK\_P9RPOST} \bnfor & \\
+                        &     & \bnfelem{TOK\_P1LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_P2LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_P3LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_P4LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_P5LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_P6LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_P7LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_P8LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_P9LPRE} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P1LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P2LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P3LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P4LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P5LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P6LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P7LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P8LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P9LIN} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P1LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P2LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P3LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P4LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P5LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P6LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P7LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P8LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_P9LPOST} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_IMPLIES} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_EQUIV} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_LOR} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{pred\_type} \bnfelem{TOK\_LAND} \bnfelem{pred\_type} \bnfor & \\
+                        &     & \bnfelem{TOK\_EXCLAIM} \bnfelem{pred\_type} & \\

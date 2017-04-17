@@ -1,0 +1,4 @@
+   \bnfelem{bind\_entry} & ::= & \bnfelem{var\_ident} \bnfelem{TOK\_EQUALS} \bnfelem{expr} & \\
+                         &     & \bnfelem{TOK\_SEMICOLON} \bnfor & \\
+                         &     & \bnfelem{var\_ident} \bnfelem{var\_post\_decor} & \\
+                         &     & \bnfelem{TOK\_EQUALS} \bnfelem{expr} \bnfelem{TOK\_SEMICOLON} & \\

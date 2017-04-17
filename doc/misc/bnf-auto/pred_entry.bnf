@@ -1,0 +1,3 @@
+   \bnfelem{pred\_entry} & ::= & \bnfelem{pred\_type} \bnfelem{TOK\_SEMICOLON} \bnfor & \\
+                         &     & \bnfelem{pred\_type} \bnfelem{TOK\_SEMICOLON} \bnfelem{TOK\_POUND} & \\
+                         &     & \bnfelem{TOK\_OSQUARE} \bnfelem{post\_props} \bnfelem{TOK\_CSQUARE} & \\

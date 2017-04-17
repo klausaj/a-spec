@@ -1,0 +1,2 @@
+   \bnfelem{gen\_list} & ::= & \bnfelem{TOK\_IDENT} \bnfor & \\
+                       &     & \bnfelem{gen\_list} \bnfelem{TOK\_COMMA} \bnfelem{TOK\_IDENT} & \\

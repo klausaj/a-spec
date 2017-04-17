@@ -1,0 +1,75 @@
+   \bnfelem{bexp} & ::= & \bnfelem{tuple} \bnfor & \\
+                  &     & \bnfelem{bind} \bnfor & \\
+                  &     & \bnfelem{sch\_bind} \bnfor & \\
+                  &     & \bnfelem{TOK\_SNOT} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_SOR} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_SAND} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_ZPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_ZPOST} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_ZIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_ZOUT} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_ZUNP} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_ZTYPE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_ZHIDE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_ZPROJ} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{sch\_type} \bnfor & \\
+                  &     & \bnfelem{sch\_pre\_decor} \bnfelem{sch\_type} \bnfor & \\
+                  &     & \bnfelem{sch\_type} \bnfelem{sch\_post\_decor} \bnfor & \\
+                  &     & \bnfelem{sch\_pre\_decor} \bnfelem{sch\_type} \bnfelem{sch\_post\_decor} \bnfor & \\
+                  &     & \bnfelem{set\_disp} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_UPTO} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{seq\_disp} \bnfor & \\
+                  &     & \bnfelem{cross} \bnfor & \\
+                  &     & \bnfelem{set\_comp} \bnfor & \\
+                  &     & \bnfelem{lambda} \bnfor & \\
+                  &     & \bnfelem{mu} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_OPAREN} \bnfelem{expr} \bnfelem{TOK\_CPAREN} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{tuple} \bnfor & \\
+                  &     & \bnfelem{TOK\_EXPR\_FUNC} \bnfor & \\
+                  &     & \bnfelem{TOK\_GEN\_SYM} \bnfor & \\
+                  &     & \bnfelem{var\_ident} \bnfor & \\
+                  &     & \bnfelem{var\_ident} \bnfelem{var\_post\_decor} \bnfor & \\
+                  &     & \bnfelem{TOK\_DATA\_TYPE} \bnfor & \\
+                  &     & \bnfelem{TOK\_GEN\_TYPE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_GEN\_TYPE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_PERIOD} \bnfelem{all\_words} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_PERIOD} \bnfelem{all\_words} & \\
+                  &     & \bnfelem{var\_post\_decor} \bnfor & \\
+                  &     & \bnfelem{cond\_exp} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_EXPON} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_NUMBER} \bnfor & \\
+                  &     & \bnfelem{TOK\_CHAR} \bnfor & \\
+                  &     & \bnfelem{TOK\_STRING} \bnfor & \\
+                  &     & \bnfelem{TOK\_OPAREN} \bnfelem{expr} \bnfelem{TOK\_CPAREN} \bnfor & \\
+                  &     & \bnfelem{TOK\_P1FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_P2FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_P3FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_P4FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_P5FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_P6FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_P7FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_PLUS} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_MINUS} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_P8FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{TOK\_P9FPRE} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P1FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P2FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P3FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P4FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P5FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_PLUS} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_MINUS} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P6FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_MULT} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P7FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P8FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P9FIN} \bnfelem{expr} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P1FPOST} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P2FPOST} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P3FPOST} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P4FPOST} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P5FPOST} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P6FPOST} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P7FPOST} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P8FPOST} \bnfor & \\
+                  &     & \bnfelem{expr} \bnfelem{TOK\_P9FPOST} & \\

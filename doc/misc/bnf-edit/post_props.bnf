@@ -1,0 +1,2 @@
+   \bnfelem{post\_props} & ::= & \bnfelem{post\_prop} \bnfor & \\
+                         &     & \bnfelem{post\_props} \bnfelem{TOK\_COMMA} \bnfelem{post\_prop} & \\

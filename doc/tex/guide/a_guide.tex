@@ -1,0 +1,2767 @@
+\documentclass[letterpaper,10pt,draft]{book}
+
+\usepackage{bnf}
+\usepackage{fancyhdr}
+\usepackage{verbatim}
+\usepackage{float}
+\usepackage{atex}
+\usepackage{a_guide}
+
+\title{A-Spec User Guide}
+\author{A.J. Klaus}
+
+\begin{document}
+
+\raggedright
+\raggedbottom
+
+\parindent=.25in
+
+\csname aTextColor\endcsname
+
+\maketitle
+\tableofcontents
+
+\chapter{Introduction}
+   \label{ch:Intro}
+
+This user-guide is a work in progress and many sections exist only as placeholders
+or are in need of proof-reading/editing.  However, it is in a sufficient state of
+completion to be useful as an introduction to the A-Spec language.  The author begs
+your indulgence as the difficult process of creating proper documentation grinds
+onward.  Please feel free to provide any and all feedback that comes to mind while
+reading this guide (aspec@users.sourceforge.net).
+
+\section{Background}
+   \label{sect:Background}
+
+It is widely recognized\footnote{http://spectrum.ieee.org/computing/software/why-software-fails/0}$^,$
+\footnote{ftp://ftp.hq.nasa.gov/pub/pao/reports/1999/MCO\_report.pdf}$^,$
+\footnote{http://www.stsc.hill.af.mil/crosstalk/2005/03/0503Humphrey.html} in the
+software industry that far too many software projects under-deliver on functionality,
+overrun budget targets, or fail altogether.  Although the reasons for failure are
+often complicated, a frequent theme in these projects is a failure to understand
+and contain technical complexities and risks.
+
+In the initial phases of a project, requirements tend to be `focused' and `well
+understood' resulting in an engineering team that is kept relatively small.  During
+these initial stages, the project often proceeds surprisingly well as design, architecture
+and implementation is fresh in everyones mind.  However, as time progresses, new
+features are added, initial requirements are found to be inadequate and new requirements
+are invented to capture the new `reality'.  Additional engineers are added to the
+project to accommodate the expanded scope and institutional knowledge becomes diluted
+as a result.  As the project progresses further, previously well-vetted modules or
+components are found to be incompatible with the new system or suddenly stop working
+entirely.  Other modules that have become mostly or completely obsolete continue
+to be carried within the system because the implications of removing them are not
+well understood.
+
+The end result is a massively complex system that is poorly or incompletely understood
+by the existing engineering staff.  New employees are therefore rendered completely
+incapable of quickly getting up to speed and are at best ineffective.  A far more
+insidious, and sadly common, result is new employees introducing preventable bugs
+that even `system experts' are unable to detect.
+
+In short, the common mode of operations in the software industry employs a development
+methodology that tends to devolve over time and becomes nearly impossible to manage
+at precisely the time when the system is expected to coalesce into a functioning
+product.  This fosters an engineering organization that becomes paralyzed by its
+own inertia and unable to quickly adapt to changing circumstances.  Under these
+conditions failure or under-performance is an inevitable consequence.
+
+A number of design methodologies have been invented over the years to minimize the
+issues described above.  Traditional methodologies involve writing requirement specifications,
+high-level designs, and low-level designs.  Primacy is given to natural language
+descriptions of functionality with tables, pseudo-code, flow charts, and other semi-formal
+elements interspersed.  Waterfall or iterative approaches are used to decompose
+the system and move from phase to phase within the methodology.  These methodologies
+can be effective if used properly, but often become bureaucratic and/or ambiguous.
+Worse still, the resulting documentation is often difficult to map to final implementation.
+
+Formal methodologies also involve writing requirement specifications, high-level
+designs and low-level designs.  However, unlike traditional methodologies, formal
+methods gives primacy to mathematical notation with natural language descriptions
+interspersed for clarity.  Although mathematical notation can be intimidating to
+the uninitiated, it does provide clear, unambiguous communication of a design and
+is more easily mapped to final implementation.  Most formal methodologies also dictate
+proofs be performed to ensure the results of each design phase are logically equivalent
+to the results of the previous design phase (i.e. - HLD==requirements, LLD==HLD,
+implementation==LLD).  As attractive as this sounds in theory, it is impractical
+to prove the design of large and complicated systems \footnote{Although automated
+proving tools continue to make improvements, as demonstrated by the L4.verified
+project, complete systems consisting of hundreds of thousands of lines of code are
+still infeasible to verify.  Additionally, the engineering skill-sets commonly available
+in the labor market preclude undertaking such an effort even if it were possible}$^{,}$
+\footnote{http://ertos.nicta.com.au/research/l4.verified/}.  As a result, formal
+methodologies are typically only applied to safety critical systems and even then
+only for system critical modules.
+
+\section{Purpose}
+   \label{sect:Purpose}
+
+The A-Spec project was founded upon a very basic principle: To provide a specification
+language that fills the gap between purely formal methodologies and traditional
+informal methodologies (i.e. - `to pluck the low-hanging fruit'
+\footnote{http://cacm.acm.org/magazines/2009/10/42360-retrospective-an-axiomatic-%
+basis-for-computer-programming/fulltext} provided by research in formal methods).
+
+\smallskip
+\smallskip
+Pursuant to this goal, A-Spec shall:
+\begin{itemize}
+   \item Create a specification language that is useful for common engineering activities
+      \subitem A-Spec is based upon well-vetted mathematics
+      \subitem Source document is  written in a form more familiar to engineers
+      \subitem Resultant design is compiled into Z notation and CSP
+   \item Provide a compiler that performs syntax and type checking
+      \subitem Syntax checking ensures common usage across design team
+      \subitem Type checking ensures design is consistent in use of structural elements
+      \subitem Result is presented in a form that can be used for logical proofs where prudent
+   \item Allow properties to be attached to each design element
+      \subitem Example: Assignment of tasks to processes/threads
+      \subitem Example: Sizing of data structures may be added as an annotation
+   \item Output a data structure enabling post-processing scripts to examine the design
+      \subitem Post-processing allows design to be validated against a set of extensible design rules
+      \subitem Example: Add constructs and rules to disallow unprotected sharing of resources across processes
+      \subitem Example: Add design rules specific to a project (i.e. - no data structure may exceed 128 bytes)
+      \subitem Example: Add design rules as design flaws are found to prevent similar issues in the future
+      \subitem Extensible nature of post-processing allows design process to become better as the project ages
+   \item Output a data structure enabling post-processing scripts to derive reports or semi-formal elements
+      \subitem Example: Truth tables can be auto-generated for use in test design
+      \subitem Example: Memory sizing can be auto-generated based upon properties of data structures
+      \subitem Example: State diagrams may be auto-generated for use in design presentation
+   \item Allow design elements to be assigned to design layers
+      \subitem Layers can be enabled or disabled depending on the purpose of the document
+      \subitem Disabled layers remain part of the design source, but are not part of the resultant document
+      \subitem Allows document to be tailored to a specific purpose (eg. - algorithm review, test generation)
+   \item Enable creation of thorough documentation as a natural result of solving a problem
+\end{itemize}
+
+\section{Document Conventions}
+   \label{sect:Conventions}
+
+Coming soon.
+
+\newpage
+\section{A-Spec Example}
+   \label{sect:FirstExample}
+
+This section shall introduce the capabilities of A-Spec by way of specifying a binary
+search algorithm.  A high-level design as well as a low level design is presented
+to illustrate the difference between a behavioral specification and an algorithm
+design.  This approach also highlights A-Spec's utility at various stages of system
+design.  A C implementation of the binary search algorithm is presented at the end
+of this section to serve as a point of reference as well as to illustrate the similarities
+and differences between the formal specification of an algorithm and its implementation.
+
+It is not the intention of this section to introduce and explain the syntax and
+semantics of the formal notation used by A-Spec.  This level of detail is reserved
+for later sections.  This section is only intended to introduce the reader to the
+use of A-Spec within the framework of a design methodology.
+
+\subsection{Requirements}
+   \label{sect:FirstExReq}
+
+The first step of any design methodology is to establish what a function or module
+is supposed to do.  In the case of the example presented here, the list of requirements
+is quite small:
+
+\begin{enumerate}
+  \item The find function shall return true if an only if the requested value is found in the provided array
+  \item The find function shall be able to efficiently search large lists without excessive use of memory
+\end{enumerate}
+
+\subsection{High-Level Design}
+   \label{sect:FirstExHLD}
+
+High-level design specifications, as presented in this user-guide, are intended
+to describe the interfaces a function or module provides as well as the behavior
+to be exhibited by that function or module.  In this section, the A-Spec source
+code for the binary search function is presented and then the compiled output of
+the high-level design is presented.
+
+\subsubsection{A-Spec}
+   \label{sect:FirstExHLDA}
+
+\verbatiminput{../../../a-spec/guide/BinSearchHLD/BinSearchHLD.as}
+
+As can be expected, the specification of the interface to and behavior of an array
+search function is very brief.  In general, this will be true of a high-level specification
+of any individual function or module.  As no attempt is made to describe how a modules
+behavior is elicited, details are intentionally excluded at this level of specificity.
+Therefore, the high-level design for this example states the $find$ function returns
+true if and only if the requested value is found in the provided list.  No mention
+of the algorithm used by the function is made and therefore the example's second
+requirement must be addressed by the low-level design.
+
+\newpage
+\subsubsection{Output}
+   \label{sect:FirstExHLDZ}
+
+\input{../../../out/guide/a-spec/BinSearchHLD/BinSearchHLD.a.tex}
+
+The final presentation of the high-level specification is even more compact.  Although
+logically identical to the A-Spec source code, the final presentation is able to
+eliminate much of the markup found in the source document as well as compress text-based
+identifiers into a standard mathematical symbolic representation.
+
+\let\OZPARList\undefined
+\let\OZPARFinnd\undefined
+
+\newpage
+\subsection{Low-Level Design}
+   \label{sect:FirstExLLD}
+
+Low-level designs, as presented in this user-guide, shall provide the algorithmic
+detail the associated high-level designs leave out.  As a natural result of this,
+a function's low-level design will tend to be larger and more complex than its high-level
+design.  Although this can result in a specification that requires more effort to
+digest and comprehend, the greater degree of specificity allows a much more straightforward
+mapping from design to code.
+
+\subsubsection{A-Spec}
+   \label{sect:FirstExLLDA}
+
+\verbatiminput{../../../a-spec/guide/BinSearchLLD/BinSearchLLD.as}
+
+The low-level design of the binary search algorithm specified above presents the
+same interface as the high-level design.  Careful examination should also reveal
+the behavior that emerges from the low-level design algorithm fulfills the behavioral
+requirement specified by the high-level design.  Take note of the intentional use
+of the phrase `should also reveal'.  In the absence of a formal proof of correctness,
+it is important to understand the high-level and low-level designs cannot be guaranteed
+to be logically equivalent.  This is not to suggest that a proof of correctness
+is required or even desirable in all cases, it is only to reinforce the idea that
+a design specification is only as good as the methodology that drives it.  This
+statement covers the entire spectrum of design methodologies from no design whatsoever
+up to and including a formal proof of correctness.  It is entirely up to the reader
+to decide what level of rigour is prudent for their particular project.
+
+\newpage
+\subsubsection{Output}
+   \label{sect:FirstExLLDZ}
+
+\input{../../../out/guide/a-spec/BinSearchLLD/BinSearchLLD.a.tex}
+
+The low-level specification of $binaryFind$ specifies a standard binary search that
+splits the provided list into high and low halves.  If the selected midpoint is
+less than, greater than, or equal to the provided value then the algorithm recursively
+searches the high half, recursively searches the low half, or returns $true$ respectively.
+Two specials exit conditions are defined if the provided list contains either a
+single element or no elements at all.
+
+\let\OZPARSortedList\undefined
+\let\OZPARBinnaryFinnd\undefined
+
+\newpage
+\subsection{C Implementation}
+   \label{sect:FirstExImplC}
+
+Given the specificity of the low level design presented in \sectref{sect:FirstExLLD},
+developing an implementation of the algorithm is a straightforward process.  A possible
+implementation of this algorithm is presented below.
+
+\verbatiminput{../../../c-impl/guide/BinSearchLLD/BinSearchLLD.c}
+
+The C implementation shown above very closely mirrors the algorithm presented in
+\sectref{sect:FirstExLLD}.  The only substantive difference between the two is in
+the interface to the C function.  In implementation, the $binaryFind$ function takes
+an extra integer parameter.  This parameter is present because C does not have a
+built-in function to retrieve an array's size.  It would be possible, and prudent
+in some cases, to declare a C structure and set of functions that provide analogous
+behavior to the $SORTED\_LIST$ data type found in the formal specification.  Naturally
+this must be weighed against considerations such as code space and computational
+efficiency if one must target the application to a resource constrained environment.
+Alternatively the design specification could be altered to account for the limited
+functionality of the targeted platform.  Obviously the correct solution depends
+on the nature of the software project.
+
+\chapter{Installation and Use}
+   \label{ch:Install}
+
+In the current phase of the project, A-Spec uses a very basic Makefile structure
+to build and install the compiler.  As the project nears completion of the beta
+phase, a more sophisticated autoconf based installer shall be used.  In the interim,
+the steps listed in \sectref{sect:Install} should suffice to get the compiler up
+and running on most Unix based systems.
+
+\section{License}
+   \label{sect:License}
+
+\begin{verbatim}
+*******************************************************************************
+*  Copyright (c) 2009, A-Spec Project                                         *
+*  All rights reserved.                                                       *
+*                                                                             *
+*  Redistribution and use in source and binary forms, with or without         *
+*  modification, are permitted provided that the following conditions         *
+*  are met:                                                                   *
+*      - Redistributions of source code must retain the above copyright       *
+*        notice, this list of conditions and the following disclaimer.        *
+*      - Redistributions in binary form must reproduce the above copyright    *
+*        notice, this list of conditions and the following disclaimer in the  *
+*        documentation and/or other materials provided with the distribution. *
+*      - Neither the name of the A-Spec Project nor the names of its          *
+*        contributors may be used to endorse or promote products derived from *
+*        this software without specific prior written permission.             *
+*                                                                             *
+*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS        *
+*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED  *
+*  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR *
+*  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR          *
+*  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,      *
+*  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,        *
+*  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR         *
+*  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF     *
+*  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING       *
+*  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS         *
+*  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.               *
+*******************************************************************************
+\end{verbatim}
+
+\section{Installation}
+   \label{sect:Install}
+
+\begin{enumerate}
+   \item Download latest A-Spec source tarball
+      \subitem http://sourceforge.net/projects/a-spec/files/
+   \item Unpack A-Spec source tarball
+   \item Enter A-Spec build directory
+      \subitem `cd a-spec/build`
+   \item `make`
+   \item `make install`
+      \subitem Requires super-user permissions
+   \item Install Object Z \LaTeX package
+      \subitem http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id=objectz
+   \item Install A-Spec \LaTeX Style package
+      \subitem `cp -a ../misc/TeX/tex/latex/atex [\LaTeX Package Directory]`
+      \subitem [LaTeX Package Directory] is typically `/usr/share/texmf/tex/latex/`
+      \subitem As super-user: `texhash`
+   \item Install A-Spec Vim plug-in (If syntax highlighting is desired)
+      \subitem `cp ../misc/vim/as.vim [Vi Syntax Directory]`
+      \subitem [Vi Syntax Directory] is typically `/usr/share/vim/vimcurrent/syntax/`
+      \subitem Add: "au BufRead,BufNewFile *.as set filetype=as" to [User Home]/.vimrc
+      \subitem Add: "au BufRead,BufNewFile *.al set filetype=as" to [User Home]/.vimrc
+\end{enumerate}
+
+\section{System Requirements}
+   \label{sect:SysReq}
+
+\begin{itemize}
+   \item GNU CC version 3.2.1
+      \subitem Tested back to this version, likely any 3.X version will suffice
+      \subitem 2.96 is known not to work due to variable declaration syntax
+      \subitem Future releases of A-Spec may resolve this issue
+   \item GNU C Library version 2.9
+      \subitem A-Spec depends on asprintf and strndup.
+      \subitem Uncertain when these libc extensions were introduced
+      \subitem Future releases of A-Spec may remove these dependencies
+   \item Flex 2.5.4
+   \item Bison 1.25
+\end{itemize}
+
+\section{Command Line Interface}
+   \label{sect:CLI}
+
+\begin{verbatim}
+Usage: a-specc [options] [src_file]
+  -I, --importpath=path1,path2,...  Path list to add to the import path search
+                                    list
+  -o, --outfile=FILENAME            LaTeX output file
+  -t, --tabgroup=NUMBER             Spaces per ATeX tabgroup
+  -i, --indent=NUMBER               Initial spaces to be counted as source
+                                    indent
+  -d, --dotfile=FILENAME            Export AST to GraphViz 'dot' output file
+  -D, --dottype                     Export data types to GraphViz file
+  -x, --xmlfile=FILENAME            Export AST to XML output file
+  -L, --layers=layer1,layer2,...    Design layers to be exported to ATeX, XML or
+                                    'dot' formats
+  -X, --exclude=layer1,layer2,...   Design layers to be excluded from ATeX, XML
+                                    or 'dot' formats
+\end{verbatim}
+
+\chapter{A-Spec Document Structure}
+   \label{ch:DocStructure}
+
+The previous chapter provided an introduction to the background and purpose of the
+A-Spec language as well as presented a simple example of its use.  However, no discussion
+of the mechanics of writing an A-Spec document was provided.  In this chapter and
+the chapters that follow, the structure of an A-Spec document and the elements contained
+therein are described and illustrated through the use of straightforward examples.
+
+\section{Document Elements}
+   \label{sect:DocElem}
+
+An A-Spec document is made up of one or more A-Spec source files.  Each source file
+consists of a file header followed by a body containing zero or more A-Spec paragraphs.
+The header of an A-Spec file is a single line entry containing a file identifier
+that should be unique within the A-Spec document. The body of the top-level source
+file in an A-Spec document must contain a document information paragraph.  The smallest
+structurally correct A-Spec document is shown in \exref{ex:MinAS} below.
+
+\begin{example}
+   \verbatiminput{../../../a-spec/guide/MinAS/MinAS.as}
+
+   \caption{Minimalist A-Spec Document}
+   \label{ex:MinAS}
+\end{example}
+
+An A-Spec file may contain an import command at any point in the body of file outside
+of a paragraph environment.  A-Spec importing is functionally equivalent to replacing
+the import command with the body of the imported file.  If the import command specifies
+a file with an identifier that has been previously imported, the command is ignored.
+This is intended to prevent errors from duplicate imports but will cause problems
+if file identifiers are not unique across the entire A-Spec document.  The import
+command must also not violate the constraint that an information paragraph be the
+first paragraph found in the final document.  It is however acceptable to satisfy
+this constraint through the use of the import command as shown in \exref{ex:ImportAS}.
+
+\begin{example}
+   \verbatiminput{../../../a-spec/guide/ImportAS/ImportAS.as}
+
+   \caption{A-Spec Import}
+   \label{ex:ImportAS}
+\end{example}
+
+A-Spec paragraph environments are opened and closed in one of two ways depending
+upon the nature of the paragraph.  If the paragraph is used for document markup,
+XML-like tags are used to enclose the paragraph.  If the paragraph is used for formal
+notation it is enclosed by the `begin' and `end' keywords.  \exref{ex:ParEnv} illustrates
+the use of each class of paragraph environment.  A list of valid paragraph types
+and a definition of each type's purpose may be found in \sectref{ch:Paragraphs}.
+
+\begin{example}
+   \verbatiminput{../../../a-spec/guide/ParEnv/ParEnv.as}
+
+   \caption{A-Spec Paragraph Environment}
+   \label{ex:ParEnv}
+\end{example}
+
+\chapter{A-Spec Formal Elements}
+   \label{ch:FormalElem}
+
+In this chapter, the formal elements of A-Spec will be presented and the meaning
+of those elements will be explained.  It is not however the intent of this section
+to define every available operator, function or data type.  A complete library of
+these elements may be found in \chref{ch:Toolkit}.
+
+Out of necessity, many of these elements will be presented inside A-Spec paragraph
+environments that have not yet been described by this user-guide.  If the reader
+wishes to obtain an overview of these paragraphs, definitions may be found in \sectref{ch:Paragraphs}.
+However, the examples presented in this chapter are not complicated and the use
+of paragraph environments may be treated as a syntactic requirement and therefore
+not meaningful to the purpose of the example.
+
+\section{Expressions}
+   \label{sect:Expressions}
+
+In A-Spec, any element that provides a discrete value is considered an expression.
+This definition includes literal constants, variables, sets, tuples, functions,
+operators, and cartesian crosses.  \exref{ex:Expressions} illustrates various types
+of basic expressions.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+\begin{verbatim}
+5
+x
+setDisp{1, 2, 3}
+(elem1, elem2)
+min(x, 5)
+x + 5
+cross{int, Object}
+\end{verbatim}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+\azed
+\begin{zed}
+   5 \\
+   x \\
+   \{1, 2, 3 \} \\
+   (elem1, elem2) \\
+   min(x, 5) \\
+   x + 5 \\
+   (int \cross Object) \\
+\end{zed}
+\end{minipage}
+
+   \caption{Basic Expressions}
+   \label{ex:Expressions}
+\end{example}
+
+\section{Predicates}
+   \label{sect:Predicates}
+
+The expression types shown above provide great flexibility in specifying calculated
+values within a software system but do not provide any means of expressing boolean
+logic.  In A-Spec this aspect of software systems is specified using predicates.
+A predicate in A-Spec is any statement that asserts the existence or absence of
+some condition. The basic predicates available in A-Spec include literal constants,
+relational functions, relational operators and logical operators.  \exref{ex:Predicates}
+illustrates the various types of basic predicates.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+\begin{verbatim}
+true
+related(brother, sister)
+x = 5
+true || false
+\end{verbatim}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+\azed
+\begin{zed}
+   true \\
+   related(brother, sister) \\
+   x = 5 \\
+   true \lor false \\
+\end{zed}
+\end{minipage}
+
+   \caption{Basic Predicates}
+   \label{ex:Predicates}
+\end{example}
+
+\section{Variables}
+   \label{sect:Variables}
+
+Variables in A-Spec are declared by using the declaration operator `:' to associate
+a valid identifier with a data type.  A-Spec allows any set expression to be used
+as a data type.  As such, all of the following variable declaration are valid:
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/VarDecl/VarDecl.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/VarDecl/VarDecl.a.tex}
+\end{minipage}
+
+   \caption{Variable Declaration}
+   \label{ex:VarDecl}
+\end{example}
+
+\section{Advanced Predicates}
+   \label{sect:AdvPred}
+
+In addition to the basic predicates described in \sectref{sect:Predicates}, A-Spec
+provides several advanced predicate constructs to aid in the specification of complex
+systems.  Conditional predicates allow for a specification to describe branching
+logic while quantifiers are used to assert the truth of some condition across an
+arbitrarily large set of objects.  These predicates types are defined in the sections
+that follow.
+
+\subsection{Conditional Predicates}
+   \label{sect:CondPred}
+
+Conditional predicates allow alternate evaluations of a specification based upon
+some precondition.  Conditional predicates may also be nested to allow for great
+flexibility in specifying complex logic.  \exref{ex:CondPred} illustrates several
+typical use cases for conditional predicates.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/CondPred/CondPred.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/CondPred/CondPred.a.tex}
+\end{minipage}
+
+   \caption{Conditional Predicates}
+   \label{ex:CondPred}
+\end{example}
+
+\subsection{Quantifiers}
+   \label{sect:Quantifiers}
+
+Quantifiers are used when it is necessary to express that a condition holds across
+an entire set of objects.  A-Spec provides all three of the standard mathematical
+quantifiers: universal, existential, and unique.  As the names imply a universal
+quantifier asserts the stated predicate holds across an entire set, an existential
+quantifier asserts the stated predicate is true for at least one element of the
+set, and the unique quantifier asserts the stated predicate is true for one and
+only one element of the set.  The example below illustrates the use of each of these
+quantifiers.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Quantifier/Quantifier.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/Quantifier/Quantifier.a.tex}
+\end{minipage}
+
+   \caption{Quantifiers}
+   \label{ex:Quant}
+\end{example}
+
+\subsection{Local Definition}
+   \label{sect:LetPred}
+
+A-Spec also allows predicates to be defined in terms of local definitions.  A local
+definition allows local variables to be declared and used within the scope of the
+local definition construct.  The result of the local definition is defined by the
+predicate found at the end of the definition.  \exref{ex:LetPred} illustrates the
+syntax of a predicate local definition.  Although the example does not illustrate
+this, the typical use case of a local definition is to streamline the presentation
+of predicates that reference the same value multiple times.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/LetPred/LetPred.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/LetPred/LetPred.a.tex}
+\end{minipage}
+
+   \caption{Local Definition}
+   \label{ex:LetPred}
+\end{example}
+
+\subsection{Relational Functions and Operators}
+   \label{sect:PredFuncOp}
+
+A key element to A-Spec's ability to specify complex software systems is the flexibility
+to declare and subsequently use new functions and operators.  The syntax for declaring
+a function or operator is similar to the syntax for declaring a variable.
+
+\subsubsection{Relational Functions}
+   \label{sect:PredFunc}
+
+A relational function declaration begins with the syntactic marker `bool' followed
+by the function identifier, the declaration pairing operator and finally an expression
+defining the functions type signature.  The function may be used at any point after
+declaration by using the functional application construct shown in the example below.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/RelFunc/RelFunc.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/RelFunc/RelFunc.a.tex}
+\end{minipage}
+
+   \caption{Relational Functions}
+   \label{ex:RelFunc}
+\end{example}
+
+\subsubsection{Relational Operators}
+   \label{sect:PredOp}
+
+Relational operator declarations use a similar syntax, however, an additional field
+is added to the declaration prior to the operator identifier.  This field is used
+to indicate if the operator is an infix, prefix, or postfix operator as well as
+the precedence of the new operator.  Valid operator types are `bin', `pre', and
+`post' while valid operator precedences range from one to nine.  \exref{ex:RelOp}
+illustrates the declaration and usage of custom operators.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/RelOp/RelOp.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/RelOp/RelOp.a.tex}
+\end{minipage}
+
+   \caption{Relational Operators}
+   \label{ex:RelOp}
+\end{example}
+
+\section{Advanced Expressions}
+   \label{sect:AdvExpr}
+
+Although the basic expressions described in \sectref{sect:Expressions} provide great
+flexibility in specifying software systems, A-Spec also provides several advanced
+expression types useful for describing more complex logical structures.  These advanced
+expression types are defined in the sections that follow.
+
+\subsection{Conditional Expressions}
+   \label{sect:CondExpr}
+
+Conditional expressions allow alternate evaluations of a specification based upon
+some precondition.  Conditional expressions may also be nested to allow for great
+flexibility in specifying complex logic.  \exref{ex:CondExpr} illustrates several
+typical use cases for conditional expressions.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/CondExpr/CondExpr.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/CondExpr/CondExpr.a.tex}
+\end{minipage}
+
+   \caption{Conditional Expressions}
+   \label{ex:CondExpr}
+\end{example}
+
+\subsection{Lambda Expressions}
+   \label{sect:LambdaExpr}
+
+Lambda expressions provide a form of function definition as well as allowing anonymous
+function definitions.  Lambda functions are typically used to define a locally scoped
+function or as stylistic alternative to the function definition construct described
+in \sectref{sect:ExprFuncOp}.  The input parameters of the resultant function are
+defined by the declaration section of the lambda expression, while the result of
+the function is defined by the expression section of the lambda expression.  The
+examples found below illustrate the use and application of lambda functions.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Lambda/Lambda.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/Lambda/Lambda.a.tex}
+\end{minipage}
+
+   \caption{Lambda Expressions}
+   \label{ex:LambdaExpr}
+\end{example}
+
+\subsection{Mu Expressions}
+   \label{sect:MuExpr}
+
+Mu expressions are used to define an expression that has a constant value within
+a binding.  If the mu expression does not reference any variables outside its own
+scope, or if it only references constant values then the mu expression itself will
+be constant.  If however, as shown in \exref{ex:MuExpr}, the mu expression references
+externally scoped variables, the value of the mu expression is dependant upon the
+values of the external variables.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Mu/Mu.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/Mu/Mu.a.tex}
+\end{minipage}
+
+   \caption{Mu Expressions}
+   \label{ex:MuExpr}
+\end{example}
+
+\subsection{Set Comprehension}
+   \label{sect:SetComp}
+
+Analogous to lambda and mu expressions, set comprehension expressions allow specification
+of complex set expressions.  The purpose of these expressions is to define the contents
+of a set without listing every element of the set.  This is accomplished by providing
+a combination of predicate filters and a defining expression that describe only
+the elements desired in the resultant set.  A common use case for set comprehension
+is in defining new data types as illustrated below.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SetComp/SetComp.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/SetComp/SetComp.a.tex}
+\end{minipage}
+
+   \caption{Set Comprehension}
+   \label{ex:SetComp}
+\end{example}
+
+\subsection{Local Definitions}
+   \label{sect:LetExpr}
+
+Although never necessary, local definitions can provide a convenient means of storing
+a value when constructing complex expressions.  The type and result of a local definition
+expression is determined by the expression found in the final section of the $let$
+construct.  \exref{ex:LetExpr} uses a local definition to parse a message body out
+of a packed array.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/LetExpr/LetExpr.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/LetExpr/LetExpr.a.tex}
+\end{minipage}
+
+   \caption{Local Definition}
+   \label{ex:LetExpr}
+\end{example}
+
+Obviously, this very simple example could just as easily be written without the
+local definition of $len$.  However, when expressions require a reference to the
+same value multiple times, the use of a local definition can greatly streamline
+presentation.
+
+\subsection{Expression Functions and Operators}
+   \label{sect:ExprFuncOp}
+
+Just as A-Spec supports declarations of new relational functions and operators,
+new expression functions and operators may be declared as well.  As shown in the
+sections that follow, the syntax for declaring these expression constructs is similar
+to the syntax for relations described in \sectref{sect:PredFuncOp}.
+
+\subsubsection{Expression Functions}
+   \label{sect:ExprFunc}
+
+As with relational function declarations, expression function declarations begin
+with a syntactic marker.  However, in this case, the `func' marker is used to indicate
+the function yields an evaluated expression as opposed to a predicate result.  Following
+this marker is the function identifier, the declaration pairing operator, and finally
+the functions type signature.  \exref{ex:Function} illustrates the declaration and
+use of an expression function.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Function/Function.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/Function/Function.a.tex}
+\end{minipage}
+
+   \caption{Expression Functions}
+   \label{ex:Function}
+\end{example}
+
+\subsubsection{Expression Operators}
+   \label{sect:ExprOp}
+
+Similar to relational operator declarations, an expression operator declaration
+includes an additional field prior to the operator identifier.  This field is used
+to indicate if the operator is an infix, prefix, or postfix operator as well as
+the precedence of the new operator.  Valid operator types are `bin', `pre', and
+`post' while valid operator precedences range from one to nine.  \exref{ex:Operator}
+illustrates the declaration and usage of custom operators.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Operator/Operator.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/Operator/Operator.a.tex}
+\end{minipage}
+
+   \caption{Expression Operators}
+   \label{ex:Operator}
+\end{example}
+
+\section{Process Expressions}
+   \label{sect:CSP}
+
+Although, as shown in \sectref{sect:Schema}, Z notation does support constructs
+appropriate for specifying sequential processing, complex systems can be difficult
+to properly specify using pure Z notation.  Additionally Z notation semantics do
+not offer any constructs suitable for specification of concurrent systems.  For
+these reasons, A-Spec includes support for process algebra expressions derived from
+the CSP language.  The remainder of this section will introduce the process expressions
+supported by A-Spec.
+
+At the heart of all CSP specifications are processes as defined by a process expression.
+A process expression specifies the interface of a process by listing a set of events
+and the valid sequences in which those events may occur.  The most basic of these
+process expression is a previously defined process identifier.  A-Spec pre-defines
+five such process identifiers:
+\begin{enumerate}
+   \item STOP
+      \subitem Represents a process that cannot engage in any event (i.e. - deadlock)
+   \item SKIP
+      \subitem Represents the successful termination of a process
+      \subitem Defined as a process that engages in the $\checkmark$ event then behaves as STOP
+   \item DIVER
+      \subitem Represents a process that only engages in internal events (eg. - Infinite loop)
+   \item RUN(A)
+      \subitem Represents a process that is always able to engage in every event in the set A
+   \item CHAOS(A)
+      \subitem Represents a process that is entirely unpredictable within the set of events A
+      \subitem CHAOS can engage in any event in A (i.e. - Identical to RUN(A))
+      \subitem CHAOS may deadlock (i.e. - Identical to STOP)
+\end{enumerate}
+
+Of these predefined processes, STOP and SKIP are most useful while writing a design
+specification, while DIVER, RUN and CHAOS are most useful in describing properties
+of a system or design.
+
+\subsection{Events}
+   \label{sect:ProcEvent}
+
+A second form of process expression is defined by an initial event followed by the
+then ($\mathrel{\pthen}$) operator followed by another process expression.  \exref{ex:ProcExpr}
+uses a predefined process as well as event based process expressions to model a
+customer interacting with a vending machine.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcExpr/ProcExpr.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcExpr/ProcExpr.a.tex}
+\end{minipage}
+
+   \caption{Process Expression}
+   \label{ex:ProcExpr}
+\end{example}
+
+In each of these example a process is defined by a process expression.  In the first
+example, a sated customer (i.e. - $NotHungry$) is equivalent to the process $SKIP$
+indicating that customer has no further role to play in the system.  In the remaining
+examples, processes are specified to engage in some event then behave as the subsequent
+process expression defines.
+
+\subsubsection{Channels}
+   \label{sect:ProcChannel}
+
+Every CSP event is communicated over a channel defined to carry that event.  A channel
+may be defined to carry a single event, as in the previous example, or it may be
+parameterized allowing the channel to communicate a set of events.  The specific
+event communicated by a parameterized channel is determined by the parameter values
+supplied to the channel.  In this way, a parameterized channel can be thought as
+a function yielding an event as its result, while a non-parameterized channel can
+be regarded as a constant.  When applying parameters to a channel, each parameter
+is decorated with one of three prefix symbols.  The standard decoration (.) and
+output decoration (!) bind the given value to its parameter.  Semantically there
+is no difference between the two decorations and the use of one versus the other
+may be considered a descriptive embellishment.  The input decoration (?), however,
+is used to declare a new process variable, extract a value from the channel and
+bind that value to the newly declared variable.  As shown in \exref{ex:ProcChan},
+channels and parameter decorations can be used to enable inter-process communication.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcChan/ProcChan.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcChan/ProcChan.a.tex}
+\end{minipage}
+
+   \caption{Communication Channels}
+   \label{ex:ProcChan}
+\end{example}
+
+In this example, the vending machine process is extended to offer customers a choice
+of candies.  The vending machine accepts the candy selection as the input variable
+$type$ and then outputs the requested candy.  When making the candy selection, the
+customer process uses the standard decoration to indicate the parameter is neither
+an input nor an output, it is simply the event the customer is willing to participate
+in.
+
+\subsubsection{Process Alphabets}
+   \label{sect:ProcAlpha}
+
+A concept important to understanding the semantics of A-Spec's process algebra is
+the idea of an alphabet\footnote{The importance of the alphabet concept will become
+clear in \sectref{sect:ProcComp}}.  The alphabet of a process is defined to be the
+set of all events a process is able to engage in at some point in its lifespan.
+Referring to \exref{ex:ProcAlph} below, the alphabet ($\alpha$) of $P1$ would be
+$\setof{e1, e2}$, $P2$ has an alphabet of $\setof{x: int; @ e3(x)}$ while the alphabet
+of $P3$ would be $\setof{}$.  The union of the alphabets of all processes, excluding
+SKIP, is given the identifier $\Sigma$ and can be referenced within A-Spec source
+files by the identifier EVENT.  If the entire alphabet of a specification including
+SKIP is required, this can be referenced by the A-Spec identifier EVENT\_CHECK and
+is rendered as $\Sigma^{\checkmark}$.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcAlph/ProcAlph.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcAlph/ProcAlph.a.tex}
+\end{minipage}
+
+   \caption{Process Alphabet}
+   \label{ex:ProcAlph}
+\end{example}
+
+\subsubsection{Event Hiding}
+   \label{sect:EventHiding}
+
+Elements of a process's alphabet may be excluded from that process's interface by
+way of event hiding.  When events in a process's alphabet are hidden, the environment
+is no longer able to influence the process by selecting those events.  In this way,
+hidden events become invisible to the external environment and are therefore known
+as internal events.  \exref{ex:EvtHide} illustrates the use of event hiding and
+specifies the effect the hiding operator has on a process's alphabet.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/EvtHide/EvtHide.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/EvtHide/EvtHide.a.tex}
+\end{minipage}
+
+   \caption{Event Hiding}
+   \label{ex:EvtHide}
+\end{example}
+
+\subsubsection{Event Renaming}
+   \label{sect:EventRenaming}
+
+A process may also be altered by renaming the events found in that process's alphabet.
+Event renaming is accomplished by providing a function associating each member of
+a set of original events with a new event in the specification's alphabet.  \exref{ex:EvtRen}
+uses event renaming to define a soda machine by substituting the $takeCandy$ event
+with the $takeSoda$ event.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/EvtRen/EvtRen.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/EvtRen/EvtRen.a.tex}
+\end{minipage}
+
+   \caption{Event Renaming}
+   \label{ex:EvtRen}
+\end{example}
+
+\subsection{Stateful Processes}
+   \label{sect:StateProc}
+
+The examples presented thus far specify processes that maintain no internal state.
+While this does allow specification of many processes at a high-level, most non-trivial
+processes do require some level of internal state modelling.  In A-Spec this is
+accomplished by way of process functions.  A process function is a function that
+takes a set of parameters as input and returns a CSP process as its result.
+
+The example found below uses a process function to model a simple counter.  Each
+time the counter is incremented, the process function is called with the count state
+variable incremented by one.  In this way, a stateful process may be modelled without
+requiring manual construction of the processes interface in every conceivable state.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcState/ProcState.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcState/ProcState.a.tex}
+\end{minipage}
+
+   \caption{Stateful Processes}
+   \label{ex:ProcState}
+\end{example}
+
+\subsection{Conditional Processes}
+   \label{sect:CondProc}
+
+Processes may also be specified to exhibit different behavior based upon a variable
+condition.  The conditional behavior may depend on the internal state of the process
+or upon a value input from a communication channel.  \exref{ex:ProcCond} extends
+the counter example by using a conditional process definition to enforce a maximum
+counter value and specify a counter wrapping mechanism.  Although not shown in this
+example, conditional process expressions also allow the ${\bf elif}$ construct supported
+by conditional expressions and predicates.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcCond/ProcCond.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcCond/ProcCond.a.tex}
+\end{minipage}
+
+   \caption{Conditional Processes}
+   \label{ex:ProcCond}
+\end{example}
+
+\subsection{Declarations}
+   \label{sect:ProcDecl}
+
+In keeping with traditional presentations of CSP specifications, declarations of
+processes and channels are elided from the rendering of the examples in this User
+Guide.  However, the A-Spec compiler does require all identifiers to be declared
+prior to use or definition.  \exref{ex:ProcDecl} below shows the declaration syntax
+of both channels and processes with and without parameters.  A discussion of the
+mechanism used to hide declarations may be found in \sectref{sect:Properties}.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcDecl/ProcDecl.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcDecl/ProcDecl.a.tex}
+\end{minipage}
+
+   \caption{Process and Channel Declarations}
+   \label{ex:ProcDecl}
+\end{example}
+
+The semantics of CSP declarations guarantees that each declared process or event
+is unique within the specification.  This is unlike a Z notation declaration where
+the uniqueness of a variable must be guaranteed by way of predicates.  From a semantic
+perspective, channel and process declarations in a CSP environment are similar to
+free type definitions in Z Notation (\sectref{sect:Free}).
+
+\subsection{CSP and Z Notation}
+   \label{sect:ZProc}
+
+Z Notation and CSP have great deal to offer by themselves, however both have substantial
+drawbacks limiting their utility.  While Z Notation has a rich set of algebraic
+constructs and is very good at representing state information and data structures,
+it is generally impractical or impossible to model complex concurrent systems commonly
+found in the software industry.  On the other hand, CSP is very good at modelling
+just such systems but can be somewhat obtuse when modelling of complex internal
+state or data structures is required.  As such, A-Spec offers a means of combining
+CSP and Z Notation in a manner that does not require semantic extensions of either
+language.  A description of A-Spec's combination of CSP and Z Notation may be found
+in the sections that follow.
+
+\subsubsection{Z Types}
+   \label{sect:CSPZTypes}
+
+A-Spec introduces several new data types for the purpose of integrating CSP and
+Z Notation.  The first of these is a $CSP\_EVENT$.  A $CSP\_EVENT$ represents the
+list of all events available to a CSP process and is therefore equivalent to $\Sigma^{\checkmark}$
+while $\Sigma$ is defined as $\Sigma^{\checkmark} \setminus \setof{\checkmark}$.
+A basic type, $PROCESS$, is also introduced to represent all processes specified
+in an A-Spec document.
+
+\subsubsection{Z Channels}
+   \label{sect:CSPZChan}
+
+Channels and events declared by a CSP process may be accessed within a Z Notation
+environment as if they were ordinary functions and variables.  This allows for the
+partitioning of a CSP channel into sub-channels as well as the creation of composite
+channels made up of events from multiple channels.  However, great care must be exercised
+when defining these channels to ensure the result is a total injective function
+(i.e. - No two unique combinations of parameters map to the same event).  For this
+reason, although it may be possible, it is impractical to define a channel composed
+of events declared in a Z Notation environment.  Doing so would require the newly
+defined events to be guaranteed to have a unique value.  Given that events in Z
+Notation are a basic type and therefore have no defined structure, the only way
+to ensure this is to state the new event is not equal to any existing event.  For
+all but the most trivial channel definitions this is an impractical, if not impossible,
+task.
+
+The example below illustrates a composite channel defined in a Z Notation environment
+being used in a CSP process.  When accessing such a channel, square braces are used
+to indicate the requested channel is a Z Notation definition, not a standard CSP
+channel.  However, apart from syntactic requirements, the composite channel is used
+in exactly the same manner as any other channel.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ZChan/ZChan_import.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ZChan/ZChan.a.tex}
+\end{minipage}
+
+   \caption{Z Channel Definition}
+   \label{ex:ZChan}
+\end{example}
+
+%{\bf TBD: As an exercise, have the reader extend this example to allow the publisher
+%to accept subscriptions and maintain those subscriptions in a state variable.  Upon
+%each publish event, all subscribers found in the list should be called.  (This would
+%be a more practical example of Z Notation channels). \par}
+%\smallskip
+%\smallskip
+
+\paragraph{Z Channel Parameters}
+   \label{sect:CSPZChanParam}
+
+Values of channel parameters may also be specified by Z Notation expressions.  This
+has already been demonstrated in several previous examples where parameterized channels
+were used.  In those examples channel parameters were bound to either a variable
+or a literal value.  If other types of expressions are required, square braces must
+surround the expression to accommodate Z Notation syntax requirements of more advanced
+expressions.  Obviously expressions can only be used when binding a value to a channel
+parameter decorated with a standard or output decoration.  Input parameter decorations
+must be provided a previously unused valid identifier which can be bound to the
+value communicated by the channel.  \exref{ex:ZParam} illustrates the use of the
+unary minus operator to model an absolute value function.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ZParam/ZParam.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ZParam/ZParam.a.tex}
+\end{minipage}
+
+   \caption{Z Parameter Binding}
+   \label{ex:ZParam}
+\end{example}
+
+\subsubsection{Z Processes}
+   \label{sect:CSPZProc}
+
+Although processes are given a Z Notation basic type $PROCESS$ and can therefore
+be declared in a Z Notation environment, the semantics of Z Notation provided no
+mechanism to define the structure of the declared process.  For this reason, A-Spec
+does not provide a syntactic structure for importing such processes into a CSP environment.
+Support for processes in Z Notation environments is however useful when examining
+the properties of a process.  A small example of this may be found in \exref{ex:ZProc}
+below.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ZProc/ZProc.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ZProc/ZProc.a.tex}
+\end{minipage}
+
+   \caption{Z Process Examination}
+   \label{ex:ZProc}
+\end{example}
+
+The application data publishing model used previously is examined and it is asserted
+the logger and processor do not have any common events in their alphabets and neither
+process participates in the termination ($\checkmark$) event.
+
+\paragraph{Z Process Parameters}
+   \label{sect:CSPZProcParam}
+
+As already shown in \sectref{sect:StateProc}, any and all valid Z Notation expressions
+may be used as a parameter to a process function.  Square braces are neither required
+nor allowed to surround a process function parameter as the parentheses used by the
+process function delineate the start and end of the expression portion of the syntax.
+Another example of a process function may be found in \exref{ex:ZProcParam}.
+
+\begin{example}
+\begin{minipage}[t]{0.50\linewidth}
+   \verbatiminput{../../../a-spec/guide/ZProcParam/ZProcParam.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ZProcParam/ZProcParam.a.tex}
+\end{minipage}
+
+   \caption{Z Process Parameters}
+   \label{ex:ZProcParam}
+\end{example}
+
+\subsection{Process Combination}
+   \label{sect:ProcCombine}
+
+Process expressions can be combined to form more complex composite processes.  These
+process combinations may take one of two forms: process choice or process composition.
+
+\subsubsection{Choice}
+   \label{sect:ProcChoice}
+
+As the name implies, process choice operators specify a process offering a choice
+between two process expressions.  Process choice is provided by two operators: internal
+choice ($\sqcap$) and external choice ($\Box$).  Internal choice is used to represent
+a choice made by the process itself.  Since the criteria used to decide amongst
+the available processes is unknown to the external environment, internal choice
+is often called non-deterministic choice.
+
+The external choice operator is used to present a choice that can be controlled
+by a processes interface.  In this case, the choice is made by an entity external
+to the process presenting the choice.  A sample usage of the process choice operators
+may be found \exref{ex:ProcChoice} below.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcChoice/ProcChoice.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcChoice/ProcChoice.a.tex}
+\end{minipage}
+
+   \caption{Process Choice}
+   \label{ex:ProcChoice}
+\end{example}
+
+It is worth noting that both process choice operators are commutative and associative
+so the order in which process choice is presented is not relevant.  Additionally,
+if a choice is offered between two processes with one or more common initial events,
+the choice between those two processes will be made non-deterministically.  As shown
+in \exref{ex:ProcChoice2} it is possible to rewrite any such choices using the internal
+choice operator.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcChoiceEquiv/ProcChoiceEquiv.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcChoiceEquiv/ProcChoiceEquiv.a.tex}
+\end{minipage}
+
+   \caption{Equivalent Process Choices}
+   \label{ex:ProcChoice2}
+\end{example}
+
+\subsubsection{Composition}
+   \label{sect:ProcComp}
+
+Processes can also be combined by A-Spec's process composition operators.  Although
+several composition operators are provided, each can be broadly categorized as either
+sequential composition or parallel composition.
+
+\paragraph{Sequential Composition}
+   \label{sect:SeqComp}
+
+The sequential composition operator ($\mathrel{\zbig\comp}$), as shown in \exref{ex:SeqComp},
+is used to specify a process composed of two child processes.  The resultant process
+initially behaves as the first child process and then, upon successful termination
+of that child process, behaves as the second child process.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SeqComp/SeqComp.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/SeqComp/SeqComp.a.tex}
+\end{minipage}
+
+   \caption{Sequential Process Composition}
+   \label{ex:SeqComp}
+\end{example}
+
+\subparagraph{Process Interruption}
+   \label{sect:Interrupt}
+
+An alternate type of sequential composition allows a process to be interrupted upon
+the occurrence of an initial event from the interrupting process.  In \exref{ex:Interrupt},
+the interrupt operator ($\triangle$) is used to model the behavior of an exception
+handler.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Interrupt/Interrupt.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/Interrupt/Interrupt.a.tex}
+\end{minipage}
+
+   \caption{Interrupt Operator}
+   \label{ex:Interrupt}
+\end{example}
+
+\paragraph{Parallel Composition}
+   \label{sect:ParComp}
+
+The parallel composition operator is used to specify the concurrent composition
+of two processes.  An important property of this composition is that any events
+found in the alphabets of both processes can only occur when both processes are
+able to engage in that event.  As shown in \exref{ex:ParComp} $CP1$ and $CP2$ are
+able to engage in $e1$ immediately upon initialization.  However, after doing so
+$e1$ cannot occur again prior to $CP2$ engaging in $e2$.  This synchronization of
+processes is an indispensable attribute of the CSP process algebra as it allows
+the specification of inter-process communication.  A more concrete example of this
+may be found in \exref{ex:IPC}.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ParComp/ParComp.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ParComp/ParComp.a.tex}
+\end{minipage}
+
+   \caption{Parallel Process Composition}
+   \label{ex:ParComp}
+\end{example}
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/IPC/IPC.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/IPC/IPC.a.tex}
+\end{minipage}
+
+   \caption{Queue Processing}
+   \label{ex:IPC}
+\end{example}
+
+In this example, a skeleton design of a multi-threaded application is presented.
+The application consists of a producer thread, a consumer thread, and an event queue
+through which the two threads may communicate\footnote{For the sake of completeness
+it is important to note the example does not in fact specify a multi-threaded application.
+The example only specifies three concurrently operating state machines that are
+able to interact with one another.  A multi-threaded architecture is a reasonable
+interpretation of this design, but it is not the only valid interpretation.}.  The
+use of the $lock$ and $release$ events in combination with the queue process ensures
+the producer and consumer cannot simultaneously access the event queue.
+
+\subparagraph{Interleaved Composition}
+   \label{sect:Interleave}
+
+A second variant of parallel composition is provided by the interleaving operator.
+While the basic parallel composition operator requires synchronization between common
+events, the interleave operator allows such events to proceed uninhibited.  \exref{ex:Interleave}
+demonstrates a possible use of the interleaved composition operator.  In this example,
+the application process from \exref{ex:Interrupt} is interleaved with itself to
+specify a system in which two applications may run concurrently yet remain mutually
+exclusive within the system.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Interleave/Interleave.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/Interleave/Interleave.a.tex}
+\end{minipage}
+
+   \caption{Interleaved Composition}
+   \label{ex:Interleave}
+\end{example}
+
+\subparagraph{Interface Parallel Composition}
+   \label{sect:IFPar}
+
+The interface parallel operator provides parallel composition that behaves as a
+hybrid between pure parallel composition and interleaved composition.  In addition
+to the two processes to be composed, the interface parallel operator requires a
+set of events upon which the combined processes must synchronize.  Events not found
+in the interface set proceed as if the processes were combined using the interleaving
+operator.  \exref{ex:IFPar} uses the interface parallel operator to specify a system
+running two instances of the same application.  However, the only event upon which
+the application must synchronize is the $system\_shutdown$ event.  The $app\_process$
+event does not require synchronization even though both processes contain the event
+in their alphabet.
+
+\begin{example}
+\begin{minipage}[t]{0.50\linewidth}
+   \verbatiminput{../../../a-spec/guide/IFPar/IFPar.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/IFPar/IFPar.a.tex}
+\end{minipage}
+
+   \caption{Interface Parallel Composition}
+   \label{ex:IFPar}
+\end{example}
+
+\subsubsection{Replicated Combination}
+   \label{sect:ProcRepl}
+
+Many of the infix process combination operators presented above also have a prefix
+variant allowing the combination of a set of processes.  These prefix operators
+are useful when it is necessary to combine either large numbers of processes or
+a variable number of processes.  Each prefix combination operator defines a set
+of processes by way of a declaration section, an optional predicate section, and
+a mandatory process expression.  The resultant process specification is equivalent
+to using the infix variant of the replicated operator to combine each member of
+the process set.  If the specified set is an empty set, the resultant process offers
+no initial events and is therefore equivalent to $STOP$.  The sections found below
+present and describe an example of each of the replicated combination operators
+supported by A-Spec.
+
+\paragraph{Internal Choice}
+   \label{sect:ReplInternal}
+
+Replicated internal choice specifies a set of processes from which the parent process
+may choose.  As before, this choice appears to be non-deterministic from the perspective
+of the environment.  If the replication operator results in an infinite set of processes,
+the resultant process is said to exhibit unbounded non-determinism\footnote{A.W.
+Roscoe, The Theory and Practice of Concurrency, 2005 Prentice Hall. Pg 23}, and
+although this is in some cases acceptable\footnote{A.W. Roscoe, Geoff Barrett,
+Unbounded Nondeterminism in CSP, Oxford Computing Laboratory} it should generally
+be avoided.
+
+\exref{ex:ReplInternal} uses replicated internal choice to model a random number
+generator for 32-bit integers.  In this case, the predicate section of the replicated
+operator is not required because the data type chosen in the declaration section
+fully specifies the available set of integers.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ReplInternal/ReplInternal.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ReplInternal/ReplInternal.a.tex}
+\end{minipage}
+
+   \caption{Replicated Internal Choice}
+   \label{ex:ReplInternal}
+\end{example}
+
+\subparagraph{Local Definition}
+   \label{sect:LetProc}
+
+The A-Spec local process definition construct is provided as a stylistic alternative
+to replicated internal choice over a singleton set of processes.  Although semantically
+identical, the presentation of a local definition construct is often more intuitive
+than internal choice offered over a single process.  \exref{ex:LetProc} shows the
+use of the local definition construct as well as an equivalent process specified
+using replicated internal choice.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/LetProc/LetProc.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/LetProc/LetProc.a.tex}
+\end{minipage}
+
+   \caption{Local Definition}
+   \label{ex:LetProc}
+\end{example}
+
+\paragraph{External Choice}
+   \label{sect:ReplExternal}
+
+As with internal choice, external choice may also be specified using a replicated
+operator.  In this case, the resultant set of processes are presented as choices
+on the parent processes' interface.  The choice amongst these interfaces is determined
+by the environment external to the parent process.  The example below uses replicated
+external choice to allow random read access to a generic list data structure.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ReplExternal/ReplExternal.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ReplExternal/ReplExternal.a.tex}
+\end{minipage}
+
+   \caption{Replicated External Choice}
+   \label{ex:ReplExternal}
+\end{example}
+
+\paragraph{Parallel Composition}
+   \label{sect:ReplParallel}
+
+A-Spec also allows a replicated from of parallel composition.  The set of processes
+specified by this operator are processed concurrently using the same rules of synchronous
+communication described in \sectref{sect:ParComp}.  \exref{ex:ReplParallel} specifies
+a model of grid computing in which a fixed number of computers are able to operate
+simultaneously but still interact with one another.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ReplParallel/ReplParallel.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ReplParallel/ReplParallel.a.tex}
+\end{minipage}
+
+   \caption{Replicated Parallel Composition}
+   \label{ex:ReplParallel}
+\end{example}
+
+\paragraph{Interleave}
+   \label{sect:ReplInterleave}
+
+Process interleaving may also be replicated using the same syntax as the other replicated
+operators.  Semantically, the replicated interleaving operator specifies a set of
+processes that operate concurrently, but are unable to directly interact with one
+another.  \exref{ex:ReplInterleave} presents a model of a system where a fixed number
+of users are independently executing the same application on a shared machine.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ReplInterleave/ReplInterleave.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ReplInterleave/ReplInterleave.a.tex}
+\end{minipage}
+
+   \caption{Replicated Interleaving}
+   \label{ex:ReplInterleave}
+\end{example}
+
+\paragraph{Interface Parallel Composition}
+   \label{sect:ReplIFPar}
+
+The final replicated composition operator supported by A-Spec is interface parallel
+composition.  Once again, the semantics of the replicated interface parallel operator
+are the same as the binary operator extended to a set of processes.  The syntax
+of the replicated interface parallel operator is similar to the syntax of the other
+replicated operators, with the exception requiring a set of interface events upon
+which the resultant processes must synchronize.  The example below illustrates the
+use of the replicated interface parallel operator by extending the system modelled
+in \exref{ex:ReplInterleave}.  In this example, as in \exref{ex:IFPar}, multiple
+identical applications are operating concurrently on the same machine.  As before,
+the only event the applications must synchronize on is the $system\_shutdown$ event.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ReplIFPar/ReplIFPar.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ReplIFPar/ReplIFPar.a.tex}
+\end{minipage}
+
+   \caption{Replicated Interface Parallel}
+   \label{ex:ReplIFPar}
+\end{example}
+
+\subsubsection{Variable Scope}
+   \label{sect:ProcCombScope}
+
+In A-Spec, variables declared within the scope of a process expression cannot be
+accessed beyond the end of the declaring process expression.  In the case of combining
+processes using a process choice operator or parallel composition operator, this
+intuitively makes sense.  In the case of sequential composition however, it would
+seem reasonable to allow a subsequent process to access the variable declarations
+of a previous process (i.e. - $(in?var \mathrel{\pthen} SKIP) \mathrel{\zbig\comp}
+(out!var \mathrel{\pthen} SKIP)$).  However, in an effort to maintain consistent
+rules across combination operators, this is not done.  This is analogous to scoping
+rules in Java or C where the following code snippet would be invalid for the same
+reason.
+
+\begin{example}
+\begin{verbatim}
+   int absFunc(int input)
+   {
+      if(input < 0)
+      {
+         int  newVal = -input;
+      }
+      else
+      {
+         int  newVal = input;
+      }
+
+      return newVal;
+   }
+\end{verbatim}
+
+   \caption{Code Snippet}
+   \label{ex:ScopeSnippet}
+\end{example}
+
+\chapter{A-Spec Formal Paragraphs}
+   \label{ch:Paragraphs}
+
+Paragraphs provide an environment within which the predicates and expressions described
+in the previous chapter may reside.  In addition to supplying syntactic structure
+to a document, each paragraph type provides a different set of semantic connotations
+and scoping contexts to formal elements specified within the environment.  When
+used in creating a design specification, these environments allow new data types
+to be introduced, variables to be declared, system constraints to established, and
+processes to be defined.  The sections that follow describe the purpose and usage
+of each of the paragraph environments supported by A-Spec.
+
+\section{Basic Types}
+   \label{sect:Basic}
+
+A basic type declaration paragraph introduces new data types into a specification.
+A basic type declaration does not, however, provide any membership definition of
+the introduced data type.  For this reason, basic type declarations are typically
+only useful in very high level specifications and only for commonly understood data
+types as in \exref{ex:BasicDecl}.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Basic/Basic.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/Basic/Basic.a.tex}
+\end{minipage}
+
+   \caption{Basic Type Declaration}
+   \label{ex:BasicDecl}
+\end{example}
+
+\section{Free Types}
+   \label{sect:Free}
+
+An alternate, and more specific, form of data type declaration is provided by a
+free type definition paragraph.  A free type definition not only introduces a new
+data type, but also defines each valid member of the new data type.  As illustrated
+by \exref{ex:FreeDecl}, a free type definition is analogous to an enumerated type
+definition in a high-level programming language such as C or Java.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Free/Free.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/Free/Free.a.tex}
+\end{minipage}
+
+   \caption{Free Type Declaration}
+   \label{ex:FreeDecl}
+\end{example}
+
+\section{Defined Types}
+   \label{sect:TypeDef}
+
+Defined type definitions are used when introducing a data type that is a subset
+or composition of existing data types.  The right side of a type definition may
+be any valid set expression including set displays, set comprehensions, function
+definitions, cartesian crosses, and other data types.  \exref{ex:TypeDecl} illustrates
+the use of type definitions by introducing a composite data type.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/TypeDef/TypeDef.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/TypeDef/TypeDef.a.tex}
+\end{minipage}
+
+   \caption{Defined Type Declaration}
+   \label{ex:TypeDecl}
+\end{example}
+
+\section{Axiomatic Definitions}
+   \label{sect:AxDef}
+
+An axiomatic definition is used to introduce and constrain variables, constants,
+functions and operators.  Any element introduced by way of an axiomatic definition
+is global in scope and must therefore be consistent with all previous and subsequent
+specifications in an A-Spec document.  The global scope of an axiomatic definition
+also includes namespace considerations within a document.  All elements introduced
+in an axiomatic definition are part of the global document namespace, and must not
+cause namespace collisions.  The axiomatic definition described in \exref{ex:AxDef}
+builds upon the office gift example of previous sections by defining several functions
+and operators that act upon a fruit basket.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/AxDef/AxDef.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/AxDef/AxDef.a.tex}
+\end{minipage}
+
+   \caption{Axiomatic Definition}
+   \label{ex:AxDef}
+\end{example}
+
+\section{Constraints}
+   \label{sect:Const}
+
+Specifications found in constraint paragraphs are used to place bounds on elements
+in a document's global scope.  Similar to an axiomatic definition, a constraint
+must be consistent with all previous and subsequent specifications found in a document.
+This environment is commonly used when importing a general purpose library.  Such
+libraries are often specified in terms of unbound or loosely bound constants
+(eg. - maximum instance counts, alarm thresholds, etc . . .) that must be given
+concrete values before the library may be used.  The integer queue library shown
+in \exref {ex:IntQueue} and imported by \exref{ex:Const} illustrates such a library.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/IntQueue/IntQueue2.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/IntQueue/IntQueue.a.tex}
+\end{minipage}
+
+   \caption{Integer Queue}
+   \label{ex:IntQueue}
+\end{example}
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Const/Const.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/Const/Const.a.tex}
+\end{minipage}
+
+   \caption{Constraint}
+   \label{ex:Const}
+\end{example}
+
+\section{Schemas}
+   \label{sect:Schema}
+
+\subsection{Schema Definitions}
+   \label{sect:SchDef}
+
+A schema is composed of a section containing one or more member variable declarations
+as well as an optional predicate section constraining the allowed range of those
+variables.  Each member of a schema is given a variable name that must be unique
+within the local scope of the schema but may hide globally scoped variable names.
+Although schema semantics are well suited to representing composite data types
+(i.e. - data structures), it would be improper to so narrowly define the expressive
+power of a schema definition.  Schemas should be more generically understood to
+define a composite data type representing system state.  The combination of member
+variables and constraining predicates provides a great deal of flexibility in describing
+a set of allowable states within a system.  \exref{ex:Schema} demonstrates the basic
+syntax of a schema definition, while \exref{ex:SchemaHoriz} uses an alternate syntax
+to define the same schema.  More sophisticated usage of schemas will be presented
+in the user-guide sections that follow.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Schema/Schema.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/Schema/Schema.a.tex}
+\end{minipage}
+
+   \caption{Schema Definition}
+   \label{ex:Schema}
+\end{example}
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchemaHoriz/SchemaHoriz.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/SchemaHoriz/SchemaHoriz.a.tex}
+\end{minipage}
+
+   \caption{Alternate Schema Definition}
+   \label{ex:SchemaHoriz}
+\end{example}
+
+\subsection{Schema Bindings}
+   \label{sect:SchBind}
+
+Upon defining a schema type, the schema may be used in the same manner as any other
+data type.  In \exref{ex:SchBind}, a variable of type $FruitBasket$ is declared
+and defined to contain four apples, one pineapple, four oranges and five bananas
+giving an overall basket count of fourteen pieces of fruit.  When a variable is declared
+to have a schema as its data type, it is referred to as a schema binding (i.e. -
+The variable's value is bound to a particular instance of its declared schema type).
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchBind/SchBind.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchBind/SchBind.a.tex}
+\end{minipage}
+
+   \caption{Schema Binding}
+   \label{ex:SchBind}
+\end{example}
+
+\subsection{Schema References}
+   \label{sect:SchemaRef}
+
+A previously defined schema type may also be used as a standalone declaration reference.
+When used in this manner, all member variables of the schema become variable declarations
+in the current variable scope.  Any constraints defined in the schema's predicate
+section remain valid and cannot be superseded or contradicted within the new scope.
+The example shown below uses a $FruitBasket$ schema reference to define a size limited
+fruit basket.  The constraint paragraph then uses a schema reference in a quantifier
+declaration to make several basic assertions regarding the properties of the new
+fruit basket type.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchemaRef/SchemaRef.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchemaRef/SchemaRef.a.tex}
+\end{minipage}
+
+   \caption{Schema References}
+   \label{ex:SchemaRef}
+\end{example}
+
+\subsection{Schema Decorations}
+   \label{sect:SchDecor}
+
+\subsubsection{Prime Decoration}
+   \label{sect:PrimeDecor}
+
+A schema reference may be modified by way of appending a $'$ decoration (read as
+prime) to the end of the schema identifier.  This decoration alters the schema by
+applying the $'$ decoration to each member of the referenced schema.  In this way,
+schema decorations act as a renaming function for a schema's member variables.
+The $'$ decoration is typically used to represent the post-condition state of some
+process.  It is therefore uncommon, though not improper, to use a primed schema
+reference in the absence of an unprimed variant of the same schema.  \exref{ex:SchemaDecor}
+demonstrates the inclusion and use of a primed and unprimed variant of the $FruitBasket$
+schema.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchemaDecor/SchemaDecor.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchemaDecor/SchemaDecor.a.tex}
+\end{minipage}
+
+   \caption{Schema Decorations}
+   \label{ex:SchemaDecor}
+\end{example}
+
+\subsubsection{$\Delta$ Decoration}
+   \label{sect:DeltaDecor}
+
+The $\Delta$ schema decoration provides a convenient syntax for including primed
+and unprimed variants of schemas.  However, unlike the $'$ decoration, the $\Delta$
+decoration is placed before the schema reference.  \exref{ex:SchemaDelta} uses the
+$\Delta$ decoration to define a schema equivalent to the one found in \exref{ex:SchemaDecor}.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchemaDelta/SchemaDelta.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchemaDelta/SchemaDelta.a.tex}
+\end{minipage}
+
+   \caption{Schema Pre-decoration}
+   \label{ex:SchemaDelta}
+\end{example}
+
+\subsubsection{Multi-Level Decorations}
+   \label{sect:MultiDecor}
+
+It is common to use schemas to represent more than one state transition.  A-Spec
+accommodates this by allowing $'$ and $\Delta$ decorations to have a numeric suffix
+indicating the desired level of priming.  The example below illustrates this by
+using the $\zDelta{2}$ decoration to include unprimed, primed, and doubly primed
+variants of the $FruitBasket$ schema.  The example also makes use of the $\zPri{2}$
+decoration to reference double primed schema members.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchemaMultiDecor/SchemaMultiDecor.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchemaMultiDecor/SchemaMultiDecor.a.tex}
+\end{minipage}
+
+   \caption{Multi-level Schema Decoration}
+   \label{ex:SchemaMultiDecor}
+\end{example}
+
+\subsection{Process Schemas}
+   \label{sect:SchProcess}
+
+As implied in \sectref{sect:PrimeDecor}, inclusion of a primed and unprimed schema
+reference is often used to represent a process operating on a state space.  \exref{ex:SchemaProc}
+uses this convention to model a process that removes a piece of fruit from a $FruitBasket$.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchemaProc/SchemaProc.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchemaProc/SchemaProc.a.tex}
+\end{minipage}
+
+   \caption{Process Schema}
+   \label{ex:SchemaProc}
+\end{example}
+
+This example also introduces decorations for input variables ($type?$) and output
+variables ($rslt!$).  These decorations are only valid for variables and not for
+use with schema references.  It is important to note the process schema in this example
+not only indicates the variables changed by the state transition, but also those
+that are not changed.  This is required because primed and unprimed variables of
+the same base name are in fact two different and unrelated variables unless the
+predicate section of schema explicitly relates them.  If the predicate containing
+the inverse domain restriction operator ($\ndres$) was omitted from the example
+above, the counts of the other types of fruit would be unbound in the post-condition
+state.  An amusing, almost correct, interpretation of this schema would be that
+it allows for clumsy office employees who not only take the desired piece of fruit,
+but also dump the remaining contents of the basket on the floor.  The schema would
+also cover generous employees who take a piece of fruit and place many, possibly
+infinite, quantities of other fruit in the basket.  Obviously, this is unlikely
+to be the intent of the specification.
+
+\exref{ex:SchemaProc2} uses a multi-level decoration to model a process that may
+be used to exchange one piece of fruit for another.  It is important to understand
+the concepts presented in this example, as well as the previous examples, before
+moving on to the remaining sections of this chapter.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchemaProc2/SchemaProc2.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchemaProc2/SchemaProc2.a.tex}
+\end{minipage}
+
+   \caption{Multi-Transition Process Schema}
+   \label{ex:SchemaProc2}
+\end{example}
+
+\subsection{Schema Expressions}
+   \label{sect:SchExpr}
+
+Schema expressions are used to operate on schema types or bindings.  Several of
+the more important schema expressions are described in the sections that follow.
+A full accounting of available schema expressions may be found in \sectref{sect:TKSchema}.
+
+\subsubsection{Schema Binding Operator}
+   \label{sect:SchBindOp}
+
+The schema binding operator ($\Theta$) is used to bind a schema reference to a specific
+instance of that schema type.  The values assigned to the schemas member variables
+are taken from the current set of in-scope variables.  Therefore, the schema binding
+operator is only valid if each member of the referenced schema has an existing in-scope
+variable, of the same name, type and decoration, from which it can take its value.
+
+\begin{example}
+\begin{minipage}[t]{0.51\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchBindOp/SchBindOp.al}
+\end{minipage}
+\begin{minipage}[t]{0.48\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchBindOp/SchBindOp.a.tex}
+\end{minipage}
+
+   \caption{Schema Binding Operator}
+   \label{ex:SchBindOp}
+\end{example}
+
+\subsubsection{Schema Decoration Functions}
+   \label{sect:SchDecorFunc}
+
+It is often useful to relate two schemas with differing levels of decoration.  However,
+it is not possible to directly compare two schemas unless every member of each schema
+is present in the other schema and is matched in name, type and priming level.
+A-Spec includes several functions useful for altering the type signature of schemas
+for purposes of relating otherwise incompatible schemas.
+
+The pre-schema function ($pre$) hides every schema member except the lowest order
+primed variant of each member as well as any input variables (i.e. - Variables decorated
+with a $?$).  Similarly, the post-schema function ($post$)  hides every schema member
+except the highest order primed variant of each member as well as any output variables
+(i.e. - Variables decorated with a $!$).  Each of these functions are available
+to operate on both schema types as well as binding.  If the parameter to these schema
+functions is a schema binding, the values of the members of the resulting schema
+are equal to the values found in the original schema.
+
+A schema un-priming operator ($unprime$) is provided to remove all priming decorations
+from every member of the referenced schema.  This function is only valid if the
+the result of un-priming any two members would create two variables with the same
+name (i.e. - un-priming a schema containing $x$ and $x'$ would fail).  This function
+is only available for schema bindings.  As expected, the result of the renaming
+function does not alter the values of the renamed schema members.
+
+\begin{example}
+\begin{minipage}[t]{0.51\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchDecorFunc/SchDecorFunc.al}
+\end{minipage}
+\begin{minipage}[t]{0.48\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchDecorFunc/SchDecorFunc.a.tex}
+\end{minipage}
+
+   \caption{Schema Decoration Functions}
+   \label{ex:SchDecorFunc}
+\end{example}
+
+\subsubsection{Schema Type Operators}
+   \label{sect:SchTypeOp}
+
+Schema type operators are provided to further alter the type signatures of schemas.
+The two most important operators are the schema conjunction operator ($\land$) and
+the schema hiding operator ($\hide$).  The schema conjunction operator is used to
+join two schemas together.  The result of this operator is a combination of both
+the declaration section and a logical conjunction of the predicate sections of the
+joined schemas.  Joining of two schemas that would containing contradictory predicates
+is not allowed.
+
+The schema hiding operator allows one or more of a schema's member variables to
+be removed from the schema's type signature.  A-Spec provides two variants of the
+hiding operator.  The first variant removes every member of a schema that is present
+in the second parameter of the schema hiding operator.  The second variant removes
+every member of a schema present in the member list provided as the second parameter
+to the schema hiding operator.
+
+Both the schema conjunction and hiding operators may be used on both schema types
+and schema bindings.  However, the second parameter of the hiding operator cannot
+be a schema binding.  With either operator, application to a schema binding does
+not alter the values of the original schema's members.
+
+\begin{example}
+\begin{minipage}[t]{0.51\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchTypeOp/SchTypeOp.al}
+\end{minipage}
+\begin{minipage}[t]{0.48\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchTypeOp/SchTypeOp.a.tex}
+\end{minipage}
+
+   \caption{Schema Type Operators}
+   \label{ex:SchTypeOp}
+\end{example}
+
+\subsection{Process Schemas Revisited}
+   \label{sect:SchProcRevist}
+
+The example below presents a synthesis of the concepts found in previous sections.
+A process schema, $FruitBasketTake$, is first defined to take a piece of fruit from
+a fruit basket.  Another process schema, $FruitBasketRecurse$, is then defined to
+recursively apply $FruitBasket$ take to the current binding of the $FruitBasket$
+schema.
+
+\begin{example}
+\begin{minipage}[t]{0.51\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchExpr/SchExpr.al}
+\end{minipage}
+\begin{minipage}[t]{0.48\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchExpr/SchExpr.a.tex}
+\end{minipage}
+
+   \caption{Schema Process Application}
+   \label{ex:SchExpr}
+\end{example}
+
+Once again, careful attention must be paid to the mechanics of the example presented
+above.  The existential quantifier is used to assert the existence of a $FruitBasketTake$
+operation that removes one piece of fruit from the fruit basket.  If the basket
+is not empty after this operation, the process schema is recursively called.  If
+the basket is empty, no state change is made and the recursive calling of the process
+schema is terminated.
+
+The example makes use of the pre-schema and post-schema operators to extract the
+pre-condition and post-condition bindings of the process schema.  Since the pre-schema
+operator hides all schema members except unprimed and input members, the $type?$
+member of $FruitBaskeTake$ must be hidden before the resultant schema can be equated
+to the pre-condition of $FruitBasketRecurse$.  Similarly, the post-schema operator
+hides all schema members except a schemas highest order primed members and output
+members.  Thus, $rslt!$ must be hidden before the resultant post-condition schema
+may be equated to the post-condition of $FruitBasketRecurse$.
+
+In the recursive invocation of $FruitBasketRecurse$, the $unprime$ operator is used
+to equate schemas with different degrees of priming.  This is required because schemas
+are not type compatible unless they contain precisely the same members, with the
+same names, priming, and type signatures.  In the case of $FruitBasketRecurse$ this
+prevents the direct equating of the schema $FruitBasket'$ to $pre(r)$ due to differing
+levels of priming between the two schemas.  The $unprime$ operator resolves this
+by renaming primed schema members to their unprimed base names.  Complete details
+of these schema operators and several others may be found in \sectref{sect:TKSchOp}.
+
+\subsubsection{Schema Application}
+   \label{sect:SchAppl}
+
+Schema application is a construct provided by A-Spec to express the type of logic
+specified in \exref{ex:SchExpr} in a more syntactically convenient form.  The structure
+of the schema application predicate is based upon the structure of a Hoare triple.
+Specifically, given a pre-condition binding $p$, a post condition binding $q$ and
+a process schema type $C$, a schema application $\{p\} C \{q\}$ would be equivalent
+to the form:
+
+\begin{zed}
+   \exists(c: C; | \\
+      \t1 \unprime(\pre(c)) = \unprime(p); \\
+      \t1 @ \\
+      \t1 \unprime(q) = \unprime(\post(c)); \\
+   );
+\end{zed}
+
+A-Spec also provides a special-case process schema, $(\Xi)$, to be used when a state-transition
+results in no state change (i.e. - a static transition).  In this form $\{p\} \Xi \{q\}$
+would be equivalent to the form $\unprime(p) = \unprime(q);$.  Although this form
+does not offer much in the way of syntactic benefit, it does allow for more consistent
+presentation if schema application is also used to specify non-static transitions.
+
+A more detailed definition of schema application may be found in \sectref{sect:TKSchAppl}.
+However, the definition presented above is sufficient to understand the specification
+found in \exref{ex:SchAppl}
+
+\begin{example}
+\begin{minipage}[t]{0.55\linewidth}
+   \verbatiminput{../../../a-spec/guide/SchAppl/SchAppl.al}
+\end{minipage}
+\begin{minipage}[t]{0.44\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/SchAppl/SchAppl.a.tex}
+\end{minipage}
+
+   \caption{Schema Application}
+   \label{ex:SchAppl}
+\end{example}
+
+This example illustrates the use of schema application by presenting a specification
+logically equivalent to the specification found in \exref{ex:SchExpr}.  Even with
+the relatively simple example of a fruit basket, the schema application construct
+provides a far more intuitive picture of the process flow than the use of existential
+predicates as used in previous examples.  When state schemas and process schemas
+become more complicated, the readability of the existential predicate constructs
+deteriorate rapidly while schema application remains unchanged.  Schema application
+will only grow more complex as input and output parameters are added to the process
+schema.  This is analogous to adding many parameters to a method call in a high-level
+programming language and similar stylistic and readability issues result.
+
+\section{Process Environment}
+   \label{sect:Process}
+
+A process paragraph is used to introduce and define CSP processes and channels
+as well as provide a semantic framework in which the declarations and operators
+described in \sectref{sect:CSP} are valid.  Declarations found in a process paragraph
+are global in scope, however, as always, A-Spec follows the declare before use principal.
+\exref{ex:ProcEnv} shows a sample process paragraph used to define a basic data
+queue.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ProcEnv/ProcEnv.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/ProcEnv/ProcEnv.a.tex}
+\end{minipage}
+
+   \caption{Process Environment}
+   \label{ex:ProcEnv}
+\end{example}
+
+\section{Generic Definitions}
+   \label{sect:Generics}
+
+Generic data structures are provided to allow specification of logical structure
+(i.e. - predicates and expressions) without fully specifying the type signature of
+the resultant structures.  These generic constructs are analogous in form and function
+to template classes found in C++ or Java.  A-Spec provides generic forms of type
+definitions, axiomatic definitions and schema types; each of these is described
+in the sections that follow.
+
+\subsection{Generic Types}
+   \label{sect:GenType}
+
+Generic type definitions and standard type definitions are specified in the same
+paragraph environment and share a common syntax as well.  Generic definitions, however,
+must specify the names of each generic type used in the type definition.  The location
+of generic type identifiers dictates the syntax required to use the generic type
+later in the specification.  A-Spec supports the use of prefix or infix generic
+types.  A example definition and use of each type is provided below.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/GenType/GenType.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/GenType/GenType.a.tex}
+\end{minipage}
+
+   \caption{Generic Types}
+   \label{ex:GenType}
+\end{example}
+
+\subsection{Generic Axiomatic Definitions}
+   \label{sect:GenDef}
+
+A generic form of axiomatic definitions may be used to declare operators or functions
+that act on a variety of data types with common structures (eg. - a set of objects,
+a three-tuple of objects, etc . . .).  A generic axiomatic definition cannot however,
+be invoked with a data type having a different structure than the declaration specified
+(eg. - a set definition cannot handle a tuple type).  Generic axiomatic definitions
+are declared in a $gendef$ paragraph environment, but do not otherwise differ syntactically
+from standard axiomatic definitions.  \exref{ex:GenDef} illustrates the declaration
+and use of a generic function and operator.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/GenDef/GenDef.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/GenDef/GenDef.a.tex}
+\end{minipage}
+
+   \caption{Generic Axiomatic Definitions}
+   \label{ex:GenDef}
+\end{example}
+
+\subsection{Generic Schemas}
+   \label{sect:GenSch}
+
+A-Spec also supports the definition of generic schemas.  Generic schemas may be
+used when a schema member's type signature may be change without altering the logical
+structure of the schema.  As illustrated below, \exref{ex:Schema} could have been
+defined using a generic schema definition and thereby been able to specify any type
+of gift basket instead of only a fruit basket.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/GenSch/GenSch.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/GenSch/GenSch.a.tex}
+\end{minipage}
+
+   \caption{Generic Schema Definitions}
+   \label{ex:GenSch}
+\end{example}
+
+\subsection{Generic Processes}
+   \label{sect:GenProc}
+
+The final generic construct supported by A-Spec is the generic process definition.
+Similar to other generic constructs in A-Spec, a generic process definition allows
+the logical structure of a process to be defined without tying the resultant process
+to a particular data type signature.  However, the generic process does not become
+a valid CSP process until each generic type is given a non-generic qualifier.
+\exref{ex:GenProc} shows the definition and qualification of a generic map process.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/GenProc/GenProc.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azed
+   \input{../../../out/guide/a-spec/GenProc/GenProc.a.tex}
+\end{minipage}
+
+   \caption{Generic Process Definitions}
+   \label{ex:GenProc}
+\end{example}
+
+As explained in the paragraph preceding \exref{ex:GenProc}, the $GenMap$ process
+is not a valid CSP process and the channels $mapGet$ and $mapPut$ are not valid
+CSP channels.  When a generic process or channel is qualified with non-generic parameters,
+a fully-qualified anonymous copy of the generic process  is created and added to
+the appropriate A-Spec data type (i.e. - $EVENT$ is updated when channels are qualified,
+$PROCESS$ is updated when a process is qualified).  For the sake of convenience
+and readability, the example above uses channel and process aliasing to associate
+names to these otherwise anonymous structures.
+
+\chapter{A-Spec Properties}
+   \label{ch:Properties}
+
+In addition to supporting the formal semantics described in previous chapters, A-Spec
+allows each paragraph, expression, and predicate to be associated with design properties.
+These properties are free-form and may be used to indicate the size of a data structure,
+a thread upon which a process is executed, or to provide hooks post-processing scripts
+may use to auto-generate semi-formal/informal representations of the original design.
+Examples of the use of post-processing scripts may be found in \chref{ch:Scripts}.
+
+\section{Paragraph Properties}
+   \label{sect:ParProp}
+
+Properties may be included in an A-Spec document using one of two forms.  The tag
+form, shown in \exref{ex:ParProp}, is used to attach properties at the paragraph
+level.  Any paragraph environment, excluding document information, is able to accept
+properties of this form.  The contents of a paragraph property list are delimited
+by semi-colons and the contents of a property entry are white-space delimited.
+A-Spec recognizes several built-in paragraph properties for purposes of formatting
+output, and care should be taken not to misuse the property keys described in \chref{ch:Output}.
+One such property is the $LAYER\_ID$ property illustrated in the example below.
+A-Spec uses this property to determine if a paragraph should be included in the
+output file.  If a layer is explicitly disabled during compilation, the A-Spec compiler
+will not output the formatted file data for that paragraph.
+
+\def\LAYERIDgiftuubasket{1}
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/ParProp/ParProp.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/ParProp/ParProp.a.tex}
+\end{minipage}
+
+   \caption{A-Spec Paragraph Properties}
+   \label{ex:ParProp}
+\end{example}
+\def\LAYERIDgiftuubasket{0}
+
+\section{In-line Properties}
+   \label{sect:InProp}
+
+The second form of design property is added in-line with the formal elements of
+an A-Spec paragraph.  In-line properties are attached to the expression, predicate,
+or declaration preceding the start of the property list.  The contents of an in-line
+property list are delimited by a comma and the contents of a property entry are
+white-space delimited.  An example of in-line properties may be found below.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/InProp/InProp.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/InProp/InProp.a.tex}
+\end{minipage}
+
+   \caption{A-Spec In-line Properties}
+   \label{ex:InProp}
+\end{example}
+
+\chapter{A-Spec Output}
+   \label{ch:Output}
+
+This user-guide has thus far only made passing references to the output formats
+supported by the A-Spec compiler.  Each format is intended support different use
+cases, and therefore the A-Spec compiler may be configured to produce these outputs
+simultaneously.  The default configuration of the A-Spec compiler performs syntax
+and type checking but produces no output files.  This behavior may be changes using
+the compiler's command-line interface described in \chref{sect:CLI} and the output
+specific options described in the sections below.
+
+\section{\LaTeX}
+   \label{sect:Latex}
+
+Given the emphasis A-Spec places on communicating design specifications, it is imperative
+for the compiler to support an output format that can be incorporated into design
+documents and has been well vetted within the software industry.  Given also that
+A-Spec's syntax and semantics are directly derived from the syntax and semantics
+of Z notation and CSP, \LaTeX{} is an obvious choice due to its widespread acceptance
+and built-in support of the symbols used by both notations.
+
+\subsection{Formatting}
+   \label{sect:TeXFormat}
+
+A-Spec's \LaTeX{} formatter works on the WYSIAWYG (what you see is {\it almost} what
+you get) principle.  The largest formatting differences between an A-Spec source
+document and the \LaTeX{} output are the conversion of selected identifiers to mathematical
+symbols and the graphical structuring of paragraph environments.  Line-breaks and
+blank lines found in an A-Spec source file are preserved when formatting \LaTeX{}
+output, however the width of a blank line may not be as expected in the \LaTeX{}
+output depending upon font size used in the document.  Newline indentation is also
+preserved, with the caveat that variable width fonts will preclude preservation
+of precise character alignment found in the source document.  Intra-line spacing
+is handled by \LaTeX{}'s type-setting engine and is therefore not carried over from
+the source document.  Additionally, several paragraph level properties are provided
+to better control the formatting of \LaTeX{} output.
+
+The $LAYER\_ID$ property is used to assign a paragraph to a design layer.  Command
+line options may then be used to prevent the A-Spec compiler from exporting specified
+layers to the \LaTeX{} output file.  Alternatively, \LaTeX{} macros may be used to
+prevent design layers from being displayed when importing an A-Spec output file.
+If a paragraph does not specify a design layer, the A-Spec compiler places the paragraph
+on the $NULL$ layer.  This layer cannot be disabled by way of \LaTeX{} macros, but
+may be excluded from the A-Spec output file by way of command line switches.
+
+A useful side-effect of these design layer control constructs is the ability to
+display paragraphs in a different order than they are defined in the A-Spec source
+document.  \exref{ex:LayerIDOZ} illustrates the use of layer ids to control the
+output of an A-Spec document and \exref{ex:LayerIDTeX} shows the \LaTeX{} source
+that imports the resultant \LaTeX{} file.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/LayerID/LayerID.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \def\LAYERIDbasket{1}
+   \azsch
+   \input{../../../out/guide/a-spec/LayerID/LayerID.a.tex}
+   \def\LAYERIDbasket{0}
+   \def\LAYERIDfruUit{1}
+   \input{../../../out/guide/a-spec/LayerID/LayerID.a.tex}
+   \def\LAYERIDfruUit{0}
+\end{minipage}
+
+   \caption{A-Spec Layer IDs}
+   \label{ex:LayerIDOZ}
+\end{example}
+
+\begin{example}
+\begin{verbatim}
+\def\LAYERIDbasket{1}
+\input{../../../out/guide/a-spec/LayerID/LayerID.a.tex}
+\def\LAYERIDbasket{0}
+\def\LAYERIDfruUit{1}
+\input{../../../out/guide/a-spec/LayerID/LayerID.a.tex}
+\def\LAYERIDfruUit{0}
+\end{verbatim}
+
+   \caption{A-Spec Layer IDs Import}
+   \label{ex:LayerIDTeX}
+\end{example}
+
+Beyond the functionality already described, several important concepts found in
+this example deserve further exploration.  The most important of these is the transformation
+of the layer ids found in the source document to those used in the \LaTeX{} source
+file.  This is required because \LaTeX{} does not allow the use of underscores or
+numerics in the definition of macros created by the A-Spec compiler.  A-Spec resolves
+the issue by escaping underscores to 'uu' and numerics to 'n1, n2, etc . . .'.
+Unfortunately 'n' must then be escaped to 'nn' and 'u' to becomes 'uU'.  As these
+transformations can be bothersome to deal with, the A-Spec project provides a Perl
+script (alayers.pl) that extracts transformed layer IDs for use in \LaTeX{} source
+documents.  The second point worth noting is the double import of the Z notation
+output file.  In the initial import only the $basket$ layer is enabled and, therefore,
+only the $FruitBasket$ schema definition is displayed.  The $basket$ layer is then
+disable, the $fruit$ layer is enabled and the output file is re-imported.  The displayed
+output then contains only the free type definition of $FRUIT$.  By importing the
+output file multiple times with differing layers enabled, the order of presentation
+has been altered from the order found in the A-Spec source document.
+
+The A-Spec compiler also supports a property ($A2TEX\_XFM$) used to convert an A-Spec
+identifier to a mathematical symbol in the \LaTeX{} output.  However, the A-Spec
+compiler will only transform occurrences of the specified identifier after the definition
+of the transformation property.  The example found below uses A-Spec identifier
+transformations to convert the built-in character and string types into symbolic
+representations.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/OzXfm/OzXfm.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azbox
+   \input{../../../out/guide/a-spec/OzXfm/OzXfm.a.tex}
+\end{minipage}
+
+   \caption{A-Spec Identifier Transformation}
+   \label{ex:OzXfm}
+\end{example}
+
+Another means of controlling \LaTeX{} output is through the use of the $display$
+directive.  This directive causes the A-Spec compiler to output the specified paragraph
+on the layer indicated by the directive environment.  This provides the means to
+display a paragraph multiple times or change the design layer to which the paragraph
+is assigned.  If the intent of the directive is the latter, it is important not
+to use command line switches to disable the new or original layer for the targeted
+paragraph.  The example below illustrates the use of this directive by displaying
+the $Size$ paragraph on the $NULL$ layer.  This paragraph is defined in the A-Spec
+mathematical toolkit and was therefore originally output on the $toolkitlib$ layer.
+
+\begin{example}
+\begin{minipage}[t]{0.49\linewidth}
+   \verbatiminput{../../../a-spec/guide/Display/Display.al}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/Display/Display.a.tex}
+\end{minipage}
+
+   \caption{A-Spec Display Directive}
+   \label{ex:Display}
+\end{example}
+
+\subsection{A-Spec Compiler Options}
+   \label{sect:ZOptions}
+
+This section describes the A-Spec compiler options that influence the creation of
+the \LaTeX{} output file.
+
+\begin{verbatim}
+  -o, --outfile=FILENAME            Relative or absolute path where LaTeX output
+                                    file will be created.
+                                    [No default]
+\end{verbatim}
+
+\begin{verbatim}
+  -t, --tabgroup=NUMBER             Number of spaces to insert in LaTeX output
+                                    for each tab found in the A-Spec source.
+                                    [Default = 3]
+\end{verbatim}
+
+\begin{verbatim}
+  -i, --indent=NUMBER               Initial spaces to be counted as source
+                                    indent.  These spaces will not create
+                                    corresponding spaces in the LaTeX output
+                                    file.
+                                    [Default = 3]
+\end{verbatim}
+
+\begin{verbatim}
+  -L, --layers=layer1,layer2,...    Design layers to be exported to the LaTeX
+                                    output file.  If this is not specified, all
+                                    layers will be exported.
+                                    [No default]
+\end{verbatim}
+
+\begin{verbatim}
+  -X, --exclude=layer1,layer2,...   Design layers to be excluded from export to
+                                    the LaTeX output file.  If this is not
+                                    specified all layers will be exported.
+                                    [No default]
+\end{verbatim}
+
+\section{XML Abstract Syntax Tree}
+   \label{sect:XML}
+
+Used by post-processing scripts.
+Lots of mechanical stuff to write here.
+It'll get done when it gets done.
+
+\section{Graphviz Abstract Syntax Tree}
+   \label{sect:DOT}
+
+Used primarily for debugging A-Spec compiler.
+Lots of mechanical stuff to write here.
+It'll get done when it gets done.
+
+\chapter{A-Spec Document Markup}
+   \label{ch:Markup}
+
+Specifying a complete and correct design is a noble goal and is a pursuit worthy
+of great effort.  In practice however, this is only part of the battle.  In order
+to be useful, a design must not only be correct but also communicable and maintainable
+over, hopefully, many years.  In the initial phases of the development cycle, the
+design will be reviewed and scrutinized to ensure it meets system requirements.
+Upon approval of the design, implementors will be required to read and understand
+the design.  Code reviews will refer to the design specification to ensure the implementation
+matches the design.  As the system is prepared to go to market, product specifications,
+user-guides, and white-papers will need to be derived.  As the product matures features
+will be added, bugs will be reported, and new engineers will be added to the project.
+Every one of these events requires the design to be communicated to new or existing
+members of the engineering organization.  Obviously reading and comprehending a pure
+formal specification of a large, complex system can be an imposing task even for
+those well steeped in formal methodologies.  Therefore, most formal design specification
+should be accompanied by informal natural language text as well as semi-formal figures
+if the design is to be of practical use.
+
+A-Spec inherently supports this approach by allowing document markup to be added
+in-line with the formal elements of the language.  This markup consists of paragraph
+environments dedicated to presenting informal textual descriptions, as well as constructs
+allowing in-line annotation of formal elements.  The remainder of this chapter shall
+describe the purpose and usage of document markup supported by the A-Spec language.
+
+\section{Document Information}
+   \label{sect:DocInfo}
+
+Document information paragraphs provide an environment in which document properties
+may be expressed.  Each entry in the document information paragraph consists of
+a free-form list of white-space delimited words, numbers, or symbols.  Information
+lists are delimited as individual information entries by a semicolon as illustrated
+in \exref{ex:DocInfo}.  As mentioned in \sectref{sect:DocElem}, the document information
+paragraph must be the first paragraph found in an A-Spec document.
+
+\begin{example}
+   \verbatiminput{../../../a-spec/guide/DocInfo/DocInfo.as}
+
+   \caption{Document Information}
+   \label{ex:DocInfo}
+\end{example}
+
+\section{Descriptions}
+   \label{sect:Descriptions}
+
+The most commonly used markup will inevitably be the description paragraph.  This
+paragraph contains a text field that is written to the output file exactly as it
+appears in the document source.  Most design specification documents will consist
+of short sequences of formal elements followed by a brief informal description of
+those elements.  This allows the reader to digest the formal elements of a design
+in manageable segments rather than overwhelming them with a mountain of notation.
+\exref{ex:Desc} presents a typical use-case of the description paragraph.
+
+\begin{example}
+\begin{minipage}[t]{0.55\linewidth}
+   \verbatiminput{../../../a-spec/guide/Desc/Desc.al}
+\end{minipage}
+\begin{minipage}[t]{0.44\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/Desc/Desc.a.tex}
+\end{minipage}
+
+   \caption{A-Spec Description}
+   \label{ex:Desc}
+\end{example}
+
+\section{Annotations}
+   \label{sect:Annotations}
+
+In addition to providing a summary paragraph, it is often useful to provide annotations
+embedded within a formal paragraph environment.  These annotation can be used to
+provide clarifications of complex designs similar to the use of comments in programming
+languages.  As with the contents of a description paragraph, annotations are passed
+through to the output file unaltered and must therefore contain valid \LaTeX{} input.
+The example found below illustrates the use of in-line annotations to add markup
+to a formal paragraph environment.
+
+\begin{example}
+\begin{minipage}[t]{0.55\linewidth}
+   \verbatiminput{../../../a-spec/guide/Annotation/Annotation.al}
+\end{minipage}
+\begin{minipage}[t]{0.44\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/Annotation/Annotation.a.tex}
+\end{minipage}
+
+   \caption{A-Spec Annotation}
+   \label{ex:Annotation}
+\end{example}
+
+\subsection{\LaTeX{} Annotation Macros}
+   \label{sect:AnnoTeX}
+
+In addition to demonstrating the syntax of in-line annotation, \exref{ex:Annotation}
+introduces several annotation specific \LaTeX{} macros provided by A-Spec.  \exref{ex:AnnoTeX}
+below describes each of the macros made available by the A-Spec style file "atex.sty".
+
+\begin{example}
+\begin{minipage}[t]{0.55\linewidth}
+   \verbatiminput{../../../a-spec/guide/AnnoTeX/AnnoTeX.al}
+\end{minipage}
+\begin{minipage}[t]{0.44\linewidth}
+   \azsch
+   \input{../../../out/guide/a-spec/AnnoTeX/AnnoTeX.a.tex}
+\end{minipage}
+
+   \caption{Annotation Macros}
+   \label{ex:AnnoTeX}
+\end{example}
+
+\section{Directives}
+   \label{sect:Directives}
+
+The directive paragraph environment is used to supply commands to the A-Spec compiler
+or post-processing scripts while operating on an A-Spec document.  The format of
+directive commands is once again a white-space delimited list of words, symbols,
+or numbers.  Each command entry in the directive environment is separated by a semi-colon.
+The use of directives in conjunction with properties, and post-processing scripts
+allows for the creation of very sophisticated design derivatives.  The example below
+is intended to illustrate the format of the directive environment.  A more detailed
+example of directives in use may be found in \chref{ch:Scripts}.
+
+\begin{example}
+   \verbatiminput{../../../a-spec/guide/Direc/Direc.al}
+
+   \caption{A-Spec Directives}
+   \label{ex:Direc}
+\end{example}
+
+\chapter{Post Processing Scripts}
+   \label{ch:Scripts}
+
+\section{Finite State Machines}
+   \label{sect:FSM}
+
+\chapter{A-Spec Mathematical Toolkit}
+   \label{ch:Toolkit}
+
+\section{Schemas}
+   \label{sect:TKSchema}
+
+\subsection{Schema Operators}
+   \label{sect:TKSchOp}
+
+\subsection{Schema Functions}
+   \label{sect:TKSchFunc}
+
+\subsection{Schema Application}
+   \label{sect:TKSchAppl}
+
+\chapter{A-Spec Case Study}
+   \label{ch:CaseStudy}
+
+\end{document}

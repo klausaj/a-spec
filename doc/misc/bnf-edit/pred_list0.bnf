@@ -1,0 +1,3 @@
+   \bnfelem{pred\_list0} & ::= & \bnfelem{empty} \bnfor & \\
+                         &     & \bnfelem{pred\_list} \bnfor & \\
+                         &     & \bnfelem{pred\_type} & \\

@@ -1,0 +1,294 @@
+\ProvidesPackage{lex}
+
+\RequirePackage{pstricks}
+\RequirePackage{eoz}
+
+\newrgbcolor{aResColor}{.4 0 .15}
+\newrgbcolor{aContextColor}{0 0 .4}
+\newrgbcolor{aTextColor}{0 0 0}
+
+\newcommand{\definition}[1]%
+{%
+   {\parindent=0in \leftskip=.5in \sffamily #1 \par}%
+}%
+
+\def\aSpec{\sffamily \begin{tabbing}11\=222\=333\=444\=555\=666\=777\=888\=999\=000\=\kill \> \+}
+\def\endaSpec{\end{tabbing}}
+
+\newcommand{\aResText}[1]%
+{%
+   \csname aResColor\endcsname {\bfseries #1}\csname aTextColor\endcsname%
+}%
+
+\newcommand{\aSynText}[1]%
+{%
+   {\bfseries #1}%
+}%
+
+\newcommand{\aContext}[1]%
+{%
+   \csname aContextColor\endcsname {\bfseries #1}\csname aTextColor\endcsname%
+}%
+
+\newcommand{\openAInfo}%
+{%
+   \aResText{$<$DocumentInfo$>$}\+ \\%
+}%
+
+\newcommand{\closeAInfo}%
+{%
+   \< \aResText{$<$/DocumentInfo$>$}\- \\%
+}%
+
+\newcommand{\openAProp}%
+{%
+   \aResText{$<$Properties$>$}\+ \\%
+}%
+
+\newcommand{\closeAProp}%
+{%
+   \< \aResText{$<$/Properties$>$}\- \\%
+}%
+
+\newcommand{\openADecl}%
+{%
+   \aResText{$<$Declaration$>$}\+ \\%
+}%
+
+\newcommand{\closeADecl}%
+{%
+   \< \aResText{$<$/Declaration$>$}\- \\%
+}%
+
+\newcommand{\openAPred}%
+{%
+   \aResText{$<$Predicate$>$}\+ \\%
+}%
+
+\newcommand{\closeAPred}%
+{%
+   \< \aResText{$<$/Predicate$>$}\- \\%
+}%
+
+\newcommand{\openACommand}%
+{%
+   \aResText{$<$Command$>$}\+ \\%
+}%
+
+\newcommand{\closeACommand}%
+{%
+   \< \aResText{$<$/Command$>$}\- \\%
+}%
+
+\newcommand{\openASchema}[1]%
+{%
+   \aResText{$<$Schema$>$}[#1]\+ \\%
+}%
+
+\newcommand{\closeASchema}%
+{%
+   \< \aResText{$<$/Schema$>$}\- \\%
+}%
+
+\newcommand{\openABasic}[1]%
+{%
+   \aResText{$<$BasicDef$>$}[#1]\+ \\%
+}%
+
+\newcommand{\closeABasic}%
+{%
+   \< \aResText{$<$/BasicDef$>$}\- \\%
+}%
+
+\newcommand{\openAType}[1]%
+{%
+   \aResText{$<$TypeDef$>$}[#1]\+ \\%
+}%
+
+\newcommand{\closeAType}%
+{%
+   \< \aResText{$<$/TypeDef$>$}\- \\%
+}%
+
+\newcommand{\openAFree}[1]%
+{%
+   \aResText{$<$FreeType$>$}[#1]\+ \\%
+}%
+
+\newcommand{\closeAFree}%
+{%
+   \< \aResText{$<$/FreeType$>$}\- \\%
+}%
+
+\newcommand{\openAAxDef}[1]%
+{%
+   \aResText{$<$AxDef$>$}[#1]\+ \\%
+}%
+
+\newcommand{\closeAAxDef}%
+{%
+   \< \aResText{$<$/AxDef$>$}\- \\%
+}%
+
+\newcommand{\openAConst}[1]%
+{%
+   \aResText{$<$Constraint$>$}[#1]\+ \\%
+}%
+
+\newcommand{\closeAConst}%
+{%
+   \< \aResText{$<$/Constraint$>$}\- \\%
+}%
+
+\newcommand{\openAGenDef}[2]%
+{%
+   \aResText{$<$GenDef$>$}[#1][#2]\+ \\%
+}%
+
+\newcommand{\closeAGenDef}%
+{%
+   \< \aResText{$<$/GenDef$>$}\- \\%
+}%
+
+\newcommand{\openAGenSch}[2]%
+{%
+   \aResText{$<$GenSchema$>$}[#1][#2]\+ \\%
+}%
+
+\newcommand{\closeAGenSch}%
+{%
+   \< \aResText{$<$/GenSchema$>$}\- \\%
+}%
+
+\newcommand{\openADesc}[1]%
+{%
+   \aResText{$<$Description$>$}[#1]\+ \\%
+}%
+
+\newcommand{\closeADesc}%
+{%
+   \< \aResText{$<$/Description$>$}\- \\%
+}%
+
+
+\newcommand{\openADirec}[1]%
+{%
+   \aResText{$<$Directive$>$}[#1]\+ \\%
+}%
+
+\newcommand{\closeADirec}%
+{%
+   \< \aResText{$<$/Directive$>$}\- \\%
+}%
+
+\newcommand{\openAIndent}%
+{%
+   \+ \>%
+}%
+
+\newcommand{\closeAIndent}%
+{%
+   \- \<%
+}%
+
+\newcommand{\aLine}%
+{%
+   \kill \\
+}%
+
+\newcommand{\bs}%
+{%
+   $\backslash$%
+}%
+
+\renewcommand\paragraph%
+{%
+   \@startsection%
+      {paragraph}%
+      {4}%
+      {\z@}%
+      {3.25ex \@plus1ex \@minus.2ex}%
+      {1.25ex \@plus .2ex}%  article was {-1em}%
+      {\normalfont\normalsize\bfseries}%
+}%
+
+\renewcommand\subparagraph%
+{%
+   \@startsection%
+      {subparagraph}%
+      {5}%
+      {\z@}% article was \parindent
+      {3.25ex \@plus1ex \@minus .2ex}%
+      {1ex \@plus .2ex}% article was {-1em}%
+      {\normalfont\normalsize}%
+}%
+
+\newcommand{\deftable}[1]%
+{%
+   \begin{tabular}%
+      {@{\extracolsep{\fill}} l l l}%
+      #1%
+   \end{tabular}%
+   \smallskip%
+}%
+
+\newcommand{\aPri}[1]%
+{%
+   \bs aPri\{#1\}%
+}%
+
+\newcommand{\aDelta}[1]%
+{%
+   \bs aDelta\{#1\}%
+}%
+
+\newcommand{\aDecor}[1]%
+{%
+   [#1]%
+}%
+
+\def \aTuple   {\aSynText{tuple}}
+\def \aSetDisp {\aSynText{setDisp}}
+\def \aSeqDisp {\aSynText{seqDisp}}
+\def \aPower   {\aSynText{power }}
+\def \aCross   {\aSynText{cross}}
+\def \aSetComp {\aSynText{setComp}}
+\def \aLambda  {\aSynText{lambda}}
+\def \aMu      {\aSynText{mu}}
+\def \aSchType {\aSynText{schType}}
+\def \aBind    {\aSynText{bind}}
+\def \aIf      {\aSynText{if }}
+\def \aThen    {\aSynText{then }}
+\def \aElse    {\aSynText{else }}
+\def \aEndif   {\aSynText{endif}}
+
+\def \aFunc       {\aResText{func }}
+\def \aBool       {\aResText{bool }}
+\def \aOper       {\aResText{oper }}
+\def \aPre        {\aResText{pre }}
+\def \aPost       {\aResText{bost }}
+\def \aBin        {\aResText{bin }}
+\def \aForAll     {\aResText{forAll}}
+\def \aExists     {\aResText{exists }}
+\def \aUniq       {\aResText{exists1 }}
+
+\def \aParFun  {\aContext{parfun\ }}
+\def \aTotFun  {\aContext{totfun\ }}
+\def \aParInj  {\aContext{parinj\ }}
+\def \aTotInj  {\aContext{totinj\ }}
+\def \aParSur  {\aContext{parsur\ }}
+\def \aTotSur  {\aContext{totsur\ }}
+\def \aBiject  {\aContext{biject\ }}
+\def \aNat     {\aContext{\bs nat}}
+\def \aEquiv   {\aContext{equiv\ }}
+\def \aRef     {\aContext{ref\ }}
+\def \aDeref   {\aContext{deref}}
+\def \aSeq     {\aContext{seq\ }}
+\def \aSize    {\aContext{size}}
+\def \aCat     {\aContext{cat\ }}
+\def \aDocID   {\aContext{docID\ }}
+\def \aDocVer  {\aContext{docVer\ }}
+\def \aDocRev  {\aContext{docRev\ }}
+\def \aSpecVer {\aContext{aSpecVer\ }}
+\def \aDeriv   {\aContext{derivative\ }}
+\def \aInclude {\aContext{include\ }}

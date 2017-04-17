@@ -1,0 +1,8 @@
+   \bnfelem{pred\_type} & ::= & \bnfelem{logical\_op} \bnfor & \\
+                        &     & \bnfelem{rel\_op} \bnfor & \\
+                        &     & \bnfelem{pred\_func} \bnfor & \\
+                        &     & \bnfelem{pred\_literal} \bnfor & \\
+                        &     & \bnfelem{quantifier} \bnfor & \\
+                        &     & \bnfelem{schema\_app} \bnfor & \\
+                        &     & \bnfelem{cond\_pred} \bnfor & \\
+                        &     & \bnfelem{TOK\_OPAREN} \bnfelem{pred\_type} \bnfelem{TOK\_CPAREN} & \\

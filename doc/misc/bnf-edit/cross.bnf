@@ -1,0 +1,2 @@
+   \bnfelem{cross} & ::= & \bnfelem{TOK\_CROSS} \bnfelem{TOK\_OCURLY} \bnfelem{expr\_list} & \\
+                   &     & \bnfelem{TOK\_CCURLY} & \\

@@ -1,0 +1,2 @@
+   \bnfelem{paragraphs} & ::= & \bnfelem{empty} \bnfor & \\
+                        &     & \bnfelem{paragraphs} \bnfelem{paragraph} & \\

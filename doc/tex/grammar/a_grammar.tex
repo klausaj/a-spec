@@ -1,0 +1,1368 @@
+\documentclass[letterpaper,10pt,draft]{article}
+
+\usepackage{atex}
+\usepackage{bnf}
+\usepackage{fancyhdr}
+\usepackage{a_style}
+
+\pagestyle{plain}
+
+\textwidth 7.5in
+\textheight 10in
+\evensidemargin .5in
+\headheight .5in
+\headsep 0in
+\footskip .5in
+\oddsidemargin .5in
+\voffset -1in
+\hoffset -1in
+
+\def \caret {\textasciicircum}
+
+\begin{document}
+
+\raggedright
+\raggedbottom
+
+\parindent=0in
+
+\csname aTextColor\endcsname
+
+\section{Purpose}
+   \label{sect:Purpose}
+
+\begin{itemize}
+   \item Specify a grammar for use in software design specifications
+      \subitem Shall be mathematically consistent
+      \subitem Shall be capable of unambiguously specifying/modeling software systems
+      \subitem Shall be easily parsed into atomic design elements (i.e. - expression, predicates, etc . . .)
+      \subitem Shall allow user to specify design to appropriate level of rigor up to and including formal proof
+      \subitem Shall allow in-line markup/annotations to design elements
+      \subitem Shall be extensible: new functions, new operators, new data types, and new annotations
+\end{itemize}
+
+\section{Data Dictionary}
+   \label{sect:DataDict}
+
+\begin{itemize}
+   \item Define legal characters for use in specification language
+   \item Subset of ASCII characters
+\end{itemize}
+
+\bnftable
+{
+   \bnfelem{TAB}          & ::= & \regex{[\bs t]}                                           & \\
+   \bnfelem{LF}           & ::= & \regex{[\bs n]}                                           & \\
+   \bnfelem{CR}           & ::= & \regex{[\bs r]}                                           & \\
+   \bnfelem{SPACE}        & ::= & \regex{[ ]}                                               & \\
+   \bnfelem{EOL}          & ::= & \bnfelem{LF} \bnfor \bnfelem{CR}                          & \\
+   \bnfelem{WS}           & ::= & \bnfelem{TAB} \bnfor \bnfelem{SPACE} \bnfor \bnfelem{EOL} & \\
+}
+
+\bnftable
+{
+   \bnfelem{TOK\_SEMICOLON} & ::= & \regex{[\,;\,]}  & \\
+   \bnfelem{TOK\_COLON}     & ::= & \regex{[\,:\,]}  & \\
+   \bnfelem{TOK\_COMMA}     & ::= & \regex{[\,,\,]}  & \\
+   \bnfelem{TOK\_AT}        & ::= & \regex{[\,@\,]}  & \\
+   \bnfelem{TOK\_POUND}     & ::= & \regex{[\,\#\,]}  & \\
+   \bnfelem{TOK\_OSQUARE}   & ::= & \regex{[\,[\,]}  & \\
+   \bnfelem{TOK\_CSQUARE}   & ::= & \regex{[\,]\,]}  & \\
+   \bnfelem{TOK\_OCURLY}    & ::= & \regex{[\,\{\,]}  & \\
+   \bnfelem{TOK\_CCURLY}    & ::= & \regex{[\,\}\,]}  & \\
+   \bnfelem{TOK\_OPAREN}    & ::= & \regex{[\,(\,]}  & \\
+   \bnfelem{TOK\_CPAREN}    & ::= & \regex{[\,)\,]}  & \\
+   \bnfelem{TOK\_EXCLAIM}   & ::= & \regex{[\,!\,]}  & \\
+   \bnfelem{TOK\_QUEST}     & ::= & \regex{[\,?\,]}  & \\
+   \bnfelem{TOK\_PIPE}      & ::= & \regex{[\,\textbar\,]}  & \\
+   \bnfelem{TOK\_EQUALS}    & ::= & \regex{[\,=\,]}  & \\
+}
+
+\bnftable
+{
+   \bnfelem{SYMSEQ\_CHAR}  & ::= & \regex{[-=\textasciitilde!\$\%\caret\&*\_+\bs$|$'.$<$/$>$\bs\bs]}  & \\
+   \bnfelem{IDENT\_CHAR}   & ::= & \regex{[A-Fa-f0-9\_]}                                              & \\
+   \bnfelem{WORD\_CHAR}    & ::= & \regex{[A-Fa-f0-9\_\bs\bs]}                                        & \\
+}
+
+\bnftable
+{
+   \bnfelem{TOK\_IDENT}  & ::= & \regex{\{SYMSEQ\_CHAR\}+\regor[A-Fa-f]\{IDENT\_CHAR\}*}  & \\
+   \bnfelem{TOK\_WORD}   & ::= & \regex{\{WORD\_CHAR\}+}                                  & \\
+   \bnfelem{TOK\_STRING} & ::= & \regex{"(\bs\bs.\regor""\regor[\caret"])*"}              & \\
+   \bnfelem{TOK\_CHAR}   & ::= & \regex{`(\bs\bs[\caret`]\regor``\regor[\caret`\bs n])+`} & \\
+   \bnfelem{TOK\_NUMBER} & ::= & \regex{[0-9]+\regor0[xX][0-9a-fA-F]+}                    & \\
+}
+
+\section{Document Structure}
+   \label{sect:DocStruct}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Document consists of document info followed by zero or more paragraphs
+   \item Defines valid paragraph types
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/adoc.bnf}
+\input{../../../misc/bnf-edit/paragraphs.bnf}
+\input{../../../misc/bnf-edit/paragraph.bnf}
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Defines common items
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/par_id.bnf}
+\input{../../../misc/bnf-edit/word_list.bnf}
+\input{../../../misc/bnf-edit/text_tokens.bnf}
+\input{../../../misc/bnf-edit/post_props.bnf}
+\input{../../../misc/bnf-edit/post_prop.bnf}
+\input{../../../misc/bnf-edit/all_words.bnf}
+   
+   \bnfelem{empty}            & ::= & \bnfelem{NULL} & \\
+   \bnfelem{TOK\_PRE\_DECOR}  & ::= & \regex{delta\regor delta[2-9][0-9]*}  & \\
+   \bnfelem{TOK\_POST\_DECOR} & ::= & \regex{[']\regor['][2-9][0-9]*}  & \\
+   \bnfelem{BEGIN}            & ::= & \regex{begin[ \bs t]+} & \\
+   \bnfelem{TOK\_WHERE}       & ::= & \regex{where} & \\
+   \bnfelem{TOK\_BLOCK\_END}  & ::= & \regex{end} & \\
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Defines info structure
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/doc_info.bnf}
+\input{../../../misc/bnf-edit/info_list.bnf}
+\input{../../../misc/bnf-edit/info_entry.bnf}
+
+   \bnfelem{TOK\_INFO\_START} & ::= & \regex{$<$DocumentInfo$>$}  & \\
+   \bnfelem{TOK\_INFO\_END}   & ::= & \regex{$<$/DocumentInfo$>$} & \\
+}
+
+\subsection{Properties}
+   \label{sect:Properties}
+
+\begin{itemize}
+   \item Each paragraph may have optional properties
+\end{itemize}
+
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/prop.bnf}
+\input{../../../misc/bnf-edit/prop_list.bnf}
+\input{../../../misc/bnf-edit/prop_entry.bnf}
+
+   \bnfelem{TOK\_PROP\_START} & ::= & \regex{$<$Properties$>$}  & \\
+   \bnfelem{TOK\_PROP\_END}   & ::= & \regex{$<$/Properties$>$} & \\
+}
+
+\subsection{Expressions}
+   \label{sect:Expr}
+
+\begin{itemize}
+   \item Valid expressions defined by A-Spec
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/expr.bnf}
+\input{../../../misc/bnf-edit/bexp.bnf}
+\input{../../../misc/bnf-edit/expr_list.bnf}
+\input{../../../misc/bnf-edit/expr_list1.bnf}
+\input{../../../misc/bnf-edit/expr_list2.bnf}
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Variable expressions
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/var_exp.bnf}
+\input{../../../misc/bnf-edit/var_post_decor.bnf}
+
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      var          & $\iff$ & $var$ \\
+      var\aPri{2}  & $\iff$ & $var\zPri{2}$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Operator expression application
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/op_exp.bnf}
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      opPre$_1$ E          & $\iff$ & $opPre_1\ E$ \\
+      E$_1$ opIn$_1$ E$_2$ & $\iff$ & $E_1\ opIn_1\ E_2$ \\
+      E opPost$_1$         & $\iff$ & $E\ opPost_1$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Expression function application
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/func_app.bnf}
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      funcName(x, y) & $\iff$ & $funcName(x, y)$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item String, char, and numeric literals
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/literal_exp.bnf}
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      "Sample string"     & $\iff$ & $"Sample\ string"$ \\
+      "Sample\bs nstring" & $\iff$ & $"Sample\backslash nstring"$ \\
+      `c`                 & $\iff$ & $`c`$ \\
+      `\bs u2297`         & $\iff$ & $`\backslash u2297`$ \\
+      47                  & $\iff$ & $47$ \\
+      0x2F                & $\iff$ & $0x2F$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Tuples, cartesian cross, set display, sequence display
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/tuple.bnf}
+\input{../../../misc/bnf-edit/cross.bnf}
+\input{../../../misc/bnf-edit/set_disp.bnf}
+\input{../../../misc/bnf-edit/seq_disp.bnf}
+
+   \bnfelem{TOK\_CROSS}     & ::= & \regex{cross}   & \\
+   \bnfelem{TOK\_SET\_DISP} & ::= & \regex{setDisp} & \\
+   \bnfelem{TOK\_SEQ\_DISP} & ::= & \regex{seqDisp} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      ($x_1,..,x_n$)            & $\iff$ & $(x_1,..,x_n)$             \\
+      \aCross\{$x_1,..,x_n$\}   & $\iff$ & $x_1 \cross .. \cross x_n$ \\
+      \aSetDisp\{$x_1,..,x_n$\} & $\iff$ & $\setof{x_1,..,x_n}$       \\
+      \aSeqDisp\{$x_1,..,x_n$\} & $\iff$ & $\seqof{x_1,..,x_n}$       \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Schema expressions
+   \subitem Schema reference
+   \subitem Generic schema reference
+   \subitem Schema type
+   \subitem Schema binding
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/sch_ref_exp.bnf}
+\input{../../../misc/bnf-edit/sch_type.bnf}
+\input{../../../misc/bnf-edit/sch_pre_decor.bnf}
+\input{../../../misc/bnf-edit/sch_post_decor.bnf}
+\input{../../../misc/bnf-edit/sch_ref.bnf}
+\input{../../../misc/bnf-edit/sch_bind.bnf}
+\input{../../../misc/bnf-edit/bind_list.bnf}
+\input{../../../misc/bnf-edit/bind_entry.bnf}
+
+   \bnfelem{TOK\_SCH\_TYPE} & ::= & \regex{schType}   & \\
+   \bnfelem{TOK\_SCH\_BIND} & ::= & \regex{schBind} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      funcName$_1$(x, y)               & $\iff$ & $funcName(x, y)$            \\
+      \aSchType\{x: T$_1$; y: T$_2$;\} & $\iff$ & $\schType{x: T_1; y: T_2}$  \\
+      \aSchBind\{x = 5; y = 10;\}      & $\iff$ & $\schBind{x = 5; y = 10}$   \\
+      S\aPri{}                         & $\iff$ & S'                          \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Set comprehension, lambda expressions, mu expressions
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/set_comp.bnf}
+\input{../../../misc/bnf-edit/lambda.bnf}
+\input{../../../misc/bnf-edit/mu.bnf}
+
+   \bnfelem{TOK\_SET\_COMP} & ::= & \regex{setComp}   & \\
+   \bnfelem{TOK\_LAMBDA}    & ::= & \regex{lambda} & \\
+   \bnfelem{TOK\_MU}        & ::= & \regex{mu} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      \aSetComp\{x: T; $?$ P; $@$ E\} & $\iff$ & $\setof{x: T | P @ E}$   \\
+      \aLambda\{x: T; $?$ P; $@$ E\}  & $\iff$ & $(\lambda x: T | P @ E)$ \\
+      \aMu\{x: T; $?$ P; $@$ E\}      & $\iff$ & $(\mu x: T | P @ E)$     \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Conditional expressions
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/cond_exp.bnf}
+\input{../../../misc/bnf-edit/elif_exp.bnf}
+
+   \bnfelem{TOK\_IF}    & ::= & \regex{if} & \\
+   \bnfelem{TOK\_THEN}  & ::= & \regex{then} & \\
+   \bnfelem{TOK\_ELSE}  & ::= & \regex{else} & \\
+   \bnfelem{TOK\_ELIF}  & ::= & \regex{elif} & \\
+   \bnfelem{TOK\_ENDIF} & ::= & \regex{endif} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      \aIf P; \aThen E$_1$ \aElse E$_2$ \aEndif & $\iff$ & $if\ P\ then\ E_1\ else\ E_2\ endif$ \\
+      \aIf P; \aThen E$_1$ \aElif P$_2$; \aThen E$_2$ \aEndif & $\iff$ & $if\ P\ then\ E_1\ elif\ P_2\ then\ E_2\ endif$ \\
+   }
+}
+
+\subsection{Declarations}
+   \label{sect:Decl}
+
+\begin{itemize}
+   \item Schema inclusion
+   \item Variable declaration
+   \item Operator declaration
+   \item Function declaration
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/decl_list.bnf}
+\input{../../../misc/bnf-edit/decl_entry.bnf}
+\input{../../../misc/bnf-edit/decl_type.bnf}
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Schema inclusion includes the referenced schemas variables in the current scope
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/dsch_ref.bnf}
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      \aDelta{2}S$_1$  & $\iff$ & $S_1; S_1'; S_1''$ \\
+      S$_1$\aPri{}     & $\iff$ & $S_1'$             \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Declares a variable of the type indicated by \bnfelem{expression}
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/var_decl.bnf}
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      x: T$_1$ & $\iff$ & $x: T_1$ \\
+      x: T$_1$ & $\iff$ & $x: T_1$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Declares a new predicate or expression function
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/func_decl.bnf}
+
+   \bnfelem{TOK\_BOOL\_ID} & ::= & \regex{bool} & \\
+   \bnfelem{TOK\_FUNC\_ID} & ::= & \regex{func} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      \aBool p$_1$: (\aCross\{T$_1$, T$_2$\})                & $\iff$ & $p_1: (T_1 \cross T_2)$           \\
+      \aFunc f$_1$: (\aCross\{T$_1$, T$_2$\}) \aParFun T$_3$ & $\iff$ & $f_1: (T_1 \cross T_2) \pfun T_3$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Declares a new relation or expression operator 
+      \subitem Operator may be a prefix, postfix or infix
+      \subitem Operator takes one of nine precedence levels
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/op_decl.bnf}
+
+   \bnfelem{TOK\_REL\_ID}  & ::= & \regex{rel} & \\
+   \bnfelem{TOK\_OPER\_ID} & ::= & \regex{oper} & \\
+   \bnfelem{TOK\_OP\_TYPE} & ::= & \regex{pre[1-9]\regor post[1-9]\regor bin[1-9]} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      \aRel \aPre{5} p$_1$: T$_1$                                      & $\iff$ & $p_1\_: T_1$                          \\
+      \aRel \aPost{3} p$_1$: T$_1$                                     & $\iff$ & $\_p_1: T_1$                          \\
+      \aRel \aBin{4} p$_1$: (\aCross\{T$_1$, T$_2$\})                  & $\iff$ & $\_p_1\_: (T_1 \cross T_2)$           \\
+      \aOper \aPre{2} o$_1$: T$_1$ \aParFun T$_2$                      & $\iff$ & $o_1\_: T_1 \pfun T_2$                \\
+      \aOper \aPost{3} o$_1$: T$_1$ \aParFun T$_2$                     & $\iff$ & $\_o_1: T_1 \pfun T_2$                \\
+      \aOper \aBin{9} o$_1$: (\aCross\{T$_1$, T$_2$\}) \aParFun T$_3$  & $\iff$ & $\_o_1\_: (T_1 \cross T_2) \pfun T_3$ \\
+   }
+}
+
+\subsection{Predicates}
+   \label{sect:Pred}
+
+\begin{itemize}
+   \item Valid predicates defined by A-Spec
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/pred.bnf}
+\input{../../../misc/bnf-edit/pred_list0.bnf}
+\input{../../../misc/bnf-edit/pred_list.bnf}
+\input{../../../misc/bnf-edit/pred_entry.bnf}
+\input{../../../misc/bnf-edit/pred_type.bnf}
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Relation operator application
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/rel_op.bnf}
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      relPre$_1$ E           & $\iff$ & $relPre_1\ E$ \\
+      E$_1$ relIn$_1$ E$_2$  & $\iff$ & $E_1\ relIn_1\ E_2$ \\
+      E relPost$_1$          & $\iff$ & $E\ relPost_1$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Logical operator application
+      \subitem Only built-in operators are allowed
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/logical_op.bnf}
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      opPre$_1$ P          & $\iff$ & $opPre_1\ E$ \\
+      P$_1$ opIn$_1$ P$_2$  & $\iff$ & $P_1\ opIn_1\ P_2$ \\
+      P opPost$_1$         & $\iff$ & $P\ opPost_1$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Predicate function application
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/pred_func.bnf}
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      funcName$_1$(x, y)   & $\iff$ & $funcName(x, y)$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Predicate literals
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/pred_literal.bnf}
+
+   \bnfelem{TOK\_TRUE}  & ::= & \regex{true} & \\
+   \bnfelem{TOK\_FALSE} & ::= & \regex{false} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      true & $\iff$ & $true$ \\
+      false & $\iff$ & $false$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Predicate quantifiers
+      \subitem Universal quantifier
+      \subitem Existential quantifier
+      \subitem Unique quantifier
+      \subitem Schema application
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/quantifier.bnf}
+\input{../../../misc/bnf-edit/all_quant.bnf}
+\input{../../../misc/bnf-edit/exist_quant.bnf}
+\input{../../../misc/bnf-edit/uniq_quant.bnf}
+\input{../../../misc/bnf-edit/schema_app.bnf}
+
+   \bnfelem{TOK\_ALL}   & ::= & \regex{forAll} & \\
+   \bnfelem{TOK\_EXIST} & ::= & \regex{exists} & \\
+   \bnfelem{TOK\_UNIQ}  & ::= & \regex{exists1} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      \aForAll\{x: T$_1$; $?$ P$_1$; $@$ P$_2$;\} & $\iff$ & $\forall(x: T_1; | P_1; @ P_2;)$ \\
+      \aExists\{x: T$_1$; $?$ P$_1$; $@$ P$_2$;\} & $\iff$ & $\exists(x: T_1; | P_1; @ P_2;)$ \\
+      \aUniq\{x: T$_1$; $?$ P$_1$; $@$ P$_2$;\}   & $\iff$ & $\exists_1(x: T_1; | P_1; @ P_2;)$  \\
+      \{PreSch\} Command \{PostSch\}              & $\iff$ & $\{PreSch\} Command \{PostSch\}$  \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Conditional predicates
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/cond_pred.bnf}
+\input{../../../misc/bnf-edit/elif_pred.bnf}
+
+   \bnfelem{TOK\_IF}    & ::= & \regex{if} & \\
+   \bnfelem{TOK\_THEN}  & ::= & \regex{then} & \\
+   \bnfelem{TOK\_ELSE}  & ::= & \regex{else} & \\
+   \bnfelem{TOK\_ELIF}  & ::= & \regex{elif} & \\
+   \bnfelem{TOK\_ENDIF} & ::= & \regex{endif} & \\
+}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      \aIf P$_1$; \aThen P$_2$; \aElse P$_3$; \aEndif & $\iff$ & $if\ P_1 then\ P_2\ else\ P_3\ endif$ \\
+   }
+}
+
+\subsection{A Spec Paragraphs}
+   \label{sect:Paragraphs}
+
+\subsubsection{Basic Definitions}
+   \label{sect:BasicDef}
+
+\begin{itemize}
+   \item A \bnfelem{basic\_def} introduces a new generic data type into the specification language
+      \subitem No further constraints are placed upon the new data type
+      \subitem Properties may be attached to the paragraph as well as each data type
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/basic.bnf}
+\input{../../../misc/bnf-edit/basic_list.bnf}
+\input{../../../misc/bnf-edit/basic_entry.bnf}
+
+   \bnfelem{TOK\_BASIC\_START} & ::= & \regex{\{BEGIN\}basic}  & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openABasic{BasicDefEx}
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      Type1; \aPropText{\#[size 4, primitive yes]} \\
+      Type2; Type3; \\
+   \closeABasic
+\end{aSpec}
+
+\paragraph{Z Equivalent}
+
+\begin{zed}
+   [ Type1 ]; \\
+   [ Type2 ]; [ Type3 ] \\
+\end{zed}
+
+\subsubsection{Type Definitions}
+   \label{sect:TypeDef}
+
+\begin{itemize}
+   \item A \bnfelem{type\_def} introduces a new data type into the specification language
+      \subitem The new data type is constrained by the provided \bnfelem{expression}
+      \subitem Properties may be attached to the paragraph as well as each data type
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/type.bnf}
+\input{../../../misc/bnf-edit/type_list.bnf}
+\input{../../../misc/bnf-edit/type_entry.bnf}
+\input{../../../misc/bnf-edit/type_decl.bnf}
+\input{../../../misc/bnf-edit/gen_term.bnf}
+
+   \bnfelem{TOK\_TYPE\_START} & ::= & \regex{\{BEGIN\}type}  & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openAType{TypeDefEx}
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      UINT32 = \aSetComp\{x: \aNat; $?$ x $<$ $2^{32}$; @ x\}; \aPropText{\#[size 4, primitive yes]} \\
+      TIME\_T = UINT32; \\
+      EVENT\_QUEUE [X] = \aSeq(\aCross\{TIME\_T, X\}); \\
+   \closeAType
+\end{aSpec}
+
+\paragraph{Z Equivalent}
+
+\begin{zed}
+   UINT32 == \setof{x: \nat | x < 2^{32} @ x}; \\
+   TIME\_T == UINT32; \\
+   EVENT\_QUEUE\ X == \seq(UINT32 \cross TIME\_T); \\
+\end{zed}
+
+\subsubsection{Free Type Definitions}
+   \label{sect:FreeDef}
+
+\begin{itemize}
+   \item A \bnfelem{free\_type} is an enhanced form of a \bnfelem{basic\_def}
+      \subitem The new data type is declared and contains the unique elements found in \bnfelem{free\_list}
+      \subitem Equivalent to a \bnfelem{basic\_def} combined with a set of variable declarations in an \bnfelem{axdef}
+      \subitem Properties may be attached to the paragraph as well as each data type
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/free.bnf}
+\input{../../../misc/bnf-edit/free_list.bnf}
+\input{../../../misc/bnf-edit/free_entry.bnf}
+\input{../../../misc/bnf-edit/free_decl.bnf}
+\input{../../../misc/bnf-edit/free_vars.bnf}
+\input{../../../misc/bnf-edit/free_var.bnf}
+
+   \bnfelem{TOK\_FREE\_START} & ::= & \regex{\{BEGIN\}free}  & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openAFree{FreeTypeEx}
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      EVENT\_ID = e$_1$ $|$ e$_2$ $|$ e$_3$; \aPropText{\#[size=1, primitive=yes];} \\
+      PROP\_ID  = p$_1$ $|$ p$_2$ $|$ p$_3$; \\
+   \closeAFree
+\end{aSpec}
+
+\paragraph{Z Equivalent}
+
+\begin{zed}
+   EVENT\_ID ::= e_1 | e_2 | e_3 \\
+   PROP\_ID  ::= p_1 | p_2 | p_3 \\
+\end{zed}
+
+\subsubsection{Axiomatic Descriptions}
+   \label{sect:AxDef}
+
+\begin{itemize}
+   \item An \bnfelem{axdef} is used to introduce a new global variable, function or operator into the A-Spec document
+      \subitem Properties may be attached to the paragraph as well as each declaration and predicate
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/axdef.bnf}
+
+   \bnfelem{TOK\_AXDEF\_START} & ::= & \regex{\{BEGIN\}axdef}  & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openAAxDef{AxDefEx}
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      \aFunc add: \aCross\{UINT32, UINT32\} \aTotFun UINT32; \\
+      \aFunc \aBool equals: \aCross\{UINT32, UINT32\}; \\
+   \aWhere
+         \aForAll\{x: UINT32; y: UINT32; $?$ @ \\
+         \openAIndent
+            add(x, y) = x + y; \\
+            equals(x,y) \aEquiv x = y; \\
+         \closeAIndent
+         \}; \\
+   \closeAAxDef
+\end{aSpec}
+
+\paragraph{Z Equivalent}
+
+\begin{axdef}
+   add: (UINT32 \cross UINT32) \tfun UINT32 \\
+   equals: (UINT32 \cross UINT32) \\
+\where
+   \forall(x: UINT32; y: UINT32; @ \\
+      \t1 add(x, y) = x + y; \\
+      \t1 equals(x, y) \iff x = y; \\
+   );
+\end{axdef}
+
+\subsubsection{Constraints}
+   \label{sect:Constraints}
+
+\begin{itemize}
+   \item An \bnfelem{constraint} is used to constrain a global variable in the A-Spec document
+      \subitem Properties may be attached to the paragraph as well as each predicate
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/const.bnf}
+
+   \bnfelem{TOK\_CONST\_START} & ::= & \regex{\{BEGIN\}const}  & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openAConst{ConstraintEx}
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      globalInt32 $<$ 32768; \\
+   \closeAConst
+\end{aSpec}
+
+\paragraph{Z Equivalent}
+
+\begin{zed}
+   globalInt32 < 32768;
+\end{zed}
+
+\subsubsection{Schema Definitions}
+   \label{sect:SchemaDef}
+
+\begin{itemize}
+   \item An \bnfelem{schema} is used to introduce a new schema into the A-Spec document
+      \subitem Properties may be attached to the paragraph as well as each declaration and predicate
+      \subitem \bnfelem{declarations} are local to the schema
+      \subitem The schema only exists for conditions that satisfy the \bnfelem{predicate}
+      \subitem The schema name is specified by \bnfelem{sch\_name}
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/schema.bnf}
+\input{../../../misc/bnf-edit/schema_hdr.bnf}
+
+   \bnfelem{TOK\_SCH\_START} & ::= & \regex{\{BEGIN\}schema}  & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openASchema{SchemaDefEx}
+      \openAProp
+         \aPropText{LAYER\_IDs example;} \\
+      \closeAProp
+      Clock; \aPropText{\#[incType uses]} \\
+      localTime: TIME\_T; \\
+   \aWhere
+      localTime = clk\_time; \\
+   \closeASchema
+\end{aSpec}
+
+\paragraph{Z Equivalent}
+
+\begin{schema}{SchemaDefEx}
+   Clock \\
+   localTime: TIME\_T \\
+\where
+   localTime = clk\_time \\
+\end{schema}
+
+\subsubsection{Generics}
+   \label{sect:Generics}
+
+\begin{itemize}
+   \item Generic definitions are used to specify template functions, operators and schemas
+      \subitem Some or all data types are unspecified in the declaration of these elements
+   \item \bnfelem{gen\_field} is used to specify the lists of generics to be used
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/gen_field.bnf}
+\input{../../../misc/bnf-edit/gen_list.bnf}
+}
+
+\paragraph{Generic Axiomatic Descriptions}
+
+\begin{itemize}
+   \item \bnfelem{gen\_def} is a generic form of \bnfelem{axdef}
+      \subitem May be used to introduce global variables, functions and operators without specifying data types
+      \subitem Properties may be attached to the paragraph as well as each declaration and predicate
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/gendef.bnf}
+
+   \bnfelem{TOK\_GENDEF\_START} & ::= & \regex{\{BEGIN\}gendef}  & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openAGenDef{X, Y}{GenDefEx}
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      \aFunc makeTuple: \aCross\{X, Y\} \aTotFun \aCross\{X, Y\}; \\
+   \aWhere
+      \aForAll\{x: X; y: Y; $?$ @ \\
+      \openAIndent
+         makeTuple(x, y) = (x, y); \\
+      \closeAIndent
+      \}; \\
+   \closeAGenDef
+\end{aSpec}
+
+\paragraph{Z Equivalent}
+
+\begin{gendef}{X, Y}
+   makeTuple: (X \cross Y) \tfun (X \cross Y) \\
+\where
+   \forall(x: X; y: Y; @ \\
+      \t1 makeTuple(x, y) = (x, y); \\
+   ); \\
+\end{gendef}
+
+\paragraph{Generic Schema Definitions}
+
+\begin{itemize}
+   \item \bnfelem{gen\_def} is an generic form of \bnfelem{schema}
+      \subitem May be used to introduce schemas without specifying data types
+      \subitem Properties may be attached to the paragraph as well as each declaration and predicate
+      \subitem The schema name is specified by \bnfelem{sch\_name}
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/gensch.bnf}
+\input{../../../misc/bnf-edit/gensch_hdr.bnf}
+
+   \bnfelem{TOK\_GENSCH\_START} & ::= & \regex{\{BEGIN\}gensch}  & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openAGenSch{X, Y}{GenSchemaEx}
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      gse\_queue: \aSeq(\aCross\{X, Y\}); \\
+   \aWhere
+      \aSize(gse\_queue) $<$ 256; \\
+   \closeAGenSch
+\end{aSpec}
+
+\paragraph{Z Equivalent}
+
+\begin{genschema}{GenSchemaEx}{X, Y}
+   gse\_queue: seq(X \cross Y); \\
+\where
+   \# gse\_queue < 256; \\
+\end{genschema}
+
+\subsubsection{Descriptions}
+   \label{sect:Descriptions}
+
+\begin{itemize}
+   \item \bnfelem{description} is used to insert TeX format text into the A-Spec output
+      \subitem Properties may be attached to the paragraph
+      \subitem All characters are allowed except `$<$', `$>$', and `/' 
+      \subitem Exclusion of these characters allows the lexer to detect \bnfelem{TEXT\_END}
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/desc.bnf}
+\input{../../../misc/bnf-edit/text.bnf}
+
+   \bnfelem{TOK\_DESC\_START} & ::= & \regex{$<$Description$>$}  & \\
+   \bnfelem{TOK\_DESC\_END}   & ::= & \regex{$<$/Description$>$} & \\
+   \bnfelem{TOK\_TEXT\_START} & ::= & \regex{$<$Text$>$}  & \\
+   \bnfelem{TOK\_TEXT\_END}   & ::= & \regex{$<$/Text$>$} & \\
+   \bnfelem{TOK\_TEXT}        & ::= & \regex{[\caret $<>$/]} & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openADesc
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      \openAText 
+         This text will be inserted \{\bs bfseries\bs itshape as is\} on layer `example'. \bs\bs \\
+      \closeAText
+   \closeADesc
+\end{aSpec}
+
+\paragraph{Sample Output}
+
+   This text will be inserted {\bfseries\itshape as is} on layer `example'. \\
+   
+\subsubsection{Directives}
+   \label{sect:Directives}
+
+\begin{itemize}
+   \item \bnfelem{directive} is used to specify directives to the A-Spec `compiler'
+      \subitem Properties may be attached to the paragraph
+\end{itemize}
+
+\bnftable
+{
+\input{../../../misc/bnf-edit/direc.bnf}
+\input{../../../misc/bnf-edit/dir_list.bnf}
+\input{../../../misc/bnf-edit/dir_entry.bnf}
+
+   \bnfelem{TOK\_DIREC\_START} & ::= & \regex{$<$Directive$>$}  & \\
+   \bnfelem{TOK\_DIREC\_END}   & ::= & \regex{$<$/Directive$>$} & \\
+}
+
+\paragraph{A-Spec Example}
+
+\begin{aSpec}
+   \openADirec{DirectiveEx}
+      \openAProp
+         \aPropText{LAYER\_ID example;} \\
+      \closeAProp
+      derive pkg\_mem mem\_summary SchemaDefEx; \\
+   \closeADirec
+\end{aSpec}
+
+\paragraph{Sample Output}
+
+\begin{aSpec}%
+   Memory Summary(SchemaDefEx) \\
+   \openAIndent
+      Usage: 4 bytes \\
+      Members: 1 \\
+   \closeAIndent
+\end{aSpec}%
+
+\section{File Structure}
+   \label{sect:FileStruct}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Each A-Spec source file consists of a \#fileID followed by a valid list of paragraphs
+   \item \#import construct is used to include specifications from other files
+      \subitem Use of \#import is equivalent to cutting and pasting the target file into the current file
+      \subitem \#fileID used to prevent duplicate imports
+\end{itemize}
+
+\bnftable
+{
+   \bnfelem{FILE\_ID} & ::= & \regex{\{WS\}*\#fileID$<$\{TOK\_IDENT\}$>$} & \\
+   \bnfelem{IMPORT}   & ::= & \regex{\{WS\}*\#import$<$[A-Fa-f0-9.\_/\bs-]+$>$} & \\
+}
+
+\section{A-Spec Foundation}
+   \label{sect:Foundation}
+
+\subsection{Types}
+   \label{sect:FoundType}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Data types int, char, set, seq, string
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      int    & $\iff$ & $\num$ \\
+      char   & $\iff$ & $char$ \\
+      pset X & $\iff$ & $\power X$ \\
+      seq  X & $\iff$ & $\seq X$ \\
+      string & $\iff$ & $string$ \\
+      string & $\iff$ & $\seq char$ \\
+   }
+}
+
+\subsection{Expressions}
+   \label{sect:FoundExpr}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Schema and, or, not
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      S$_1$ \& S$_2$        & $\iff$ & $S_1 \land S_2$ \\
+      S$_1$ \textbar\ S$_2$ & $\iff$ & $S_1 \lor S_2$ \\
+      \textasciitilde S$_1$ & $\iff$ & $\lnot S_1$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Schema hide, proj
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      S$_1$ zhide S$_2$ & $\iff$ & $S_1 \zhide S_2$ \\
+      S$_1$ zproj S$_2$ & $\iff$ & $S_1 \zproject S_2$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Schema pre, post, input, output
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      zpre S$_1$   & $\iff$ & $\pre S_1$ \\
+      zpost S$_1$  & $\iff$ & $\post S_1$ \\
+      zin S$_1$    & $\iff$ & $\zin S_1$ \\
+      zout S$_1$   & $\iff$ & $\zout S_1$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Schema type, bind, unprime
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      ztype S$_1$  & $\iff$ & $\zType S_1$ \\
+      $*$S$_1$     & $\iff$ & $\theta S_1$ \\
+      zunp S$_1$   & $\iff$ & $\unprime S_1$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Static schema transition and schema select
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      \{S$_1$\} xi \{S$_2$\} & $\iff$ & $\{S_1\} \Xi \{S_2\}$ \\
+      S$_1$.v                & $\iff$ & $S_1.v$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Integer expressions plus, minus, multiply, division, modulo, exponent, and upto
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      x + y     & $\iff$ & $x + y$ \\
+      x - y     & $\iff$ & $x - y$ \\
+      x $*$ y   & $\iff$ & $x * y$ \\
+      x div y   & $\iff$ & $x \div y$ \\
+      x mod y   & $\iff$ & $x \mod y$ \\
+      x\caret y & $\iff$ & $x^y$ \\
+      x..y      & $\iff$ & $x..y$ \\
+   }
+}
+
+\subsection{Predicates}
+   \label{sect:FoundPred}
+
+\subsubsection{Logical Operators}
+   \label{sect:FoundLogical}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Equivalence and implication
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      P$_1$ $<=>$ P$_2$ & $\iff$ & $(P_1 \iff P_2)$ \\
+      P$_1$ $==>$ P$_2$ & $\iff$ & $(P_1 \Rightarrow P_2)$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Logical and, or, not
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      P$_1$ \&\& P$_2$              & $\iff$ & $(P_1 \land P_2)$ \\
+      P$_1$ \textbar\textbar\ P$_2$ & $\iff$ & $(P_1 \lor P_2)$ \\
+      !P$_1$                        & $\iff$ & $\lnot P_1$ \\
+   }
+}
+
+\subsubsection{Relational Operators}
+   \label{sect:FoundRel}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Equivalence relations =, !=, <, >, <=, >=
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      E$_1$ = E$_2$     & $\iff$ & $E_1 = E_2$ \\
+      E$_1$ != E$_2$    & $\iff$ & $E_1 \neq E_2$ \\
+      E$_1$ $<$ E$_2$   & $\iff$ & $E_1 < E_2$ \\
+      E$_1$ $>$ E$_2$   & $\iff$ & $E_1 > E_2$ \\
+      E$_1$ $<=$ E$_2$  & $\iff$ & $E_1 \leq E_2$ \\
+      E$_1$ $>=$ E$_2$  & $\iff$ & $E_1 \geq E_2$ \\
+   }
+}
+
+\paragraph{Description}
+
+\begin{itemize}
+   \item Set relations in, !in
+\end{itemize}
+
+\paragraph{Z Definitions}
+
+\definition
+{
+   \deftable
+   {
+      E$_1$ in E$_2$  & $\iff$ & $E_1 \in E_2$ \\
+      E$_1$ !in E$_2$ & $\iff$ & $E_1 \notin E_2$ \\
+   }
+}
+
+\section{A-Spec Toolkit}
+   \label{sect:Toolkit}
+
+\section{Change Log}
+   \label{sect:Change}
+
+\paragraph{V1.0a}
+
+\begin{itemize}
+   \item ??/??/??
+      \subitem Initial Release
+\end{itemize}
+
+\end{document}

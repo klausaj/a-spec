@@ -1,0 +1,2 @@
+   \bnfelem{free\_vars} & ::= & \bnfelem{free\_var} \bnfor & \\
+                        &     & \bnfelem{free\_vars} \bnfelem{TOK\_SOR} \bnfelem{free\_var} & \\

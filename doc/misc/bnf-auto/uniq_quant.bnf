@@ -1,0 +1,3 @@
+   \bnfelem{uniq\_quant} & ::= & \bnfelem{TOK\_UNIQ} \bnfelem{TOK\_OCURLY} \bnfelem{decl\_list1} & \\
+                         &     & \bnfelem{TOK\_QUEST} \bnfelem{pred\_list0} \bnfelem{TOK\_AT} & \\
+                         &     & \bnfelem{pred\_list0} \bnfelem{TOK\_CCURLY} & \\

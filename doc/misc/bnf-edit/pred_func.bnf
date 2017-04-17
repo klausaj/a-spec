@@ -1,0 +1,2 @@
+   \bnfelem{pred\_func} & ::= & \bnfelem{TOK\_IDENT} \bnfelem{TOK\_OPAREN} & \\
+                        &     & \bnfelem{expr\_list1} \bnfelem{TOK\_CPAREN} & \\

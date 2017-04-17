@@ -1,0 +1,2 @@
+   \bnfelem{dir\_list} & ::= & \bnfelem{dir\_entry} \bnfelem{TOK\_SEMICOLON} \bnfor & \\
+                       &     & \bnfelem{dir\_list} \bnfelem{dir\_entry} \bnfelem{TOK\_SEMICOLON} & \\

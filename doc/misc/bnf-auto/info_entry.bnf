@@ -1,0 +1,1 @@
+   \bnfelem{info\_entry} & ::= & \bnfelem{word\_list} \bnfelem{TOK\_SEMICOLON} & \\

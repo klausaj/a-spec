@@ -1,0 +1,4 @@
+   \bnfelem{basic} & ::= & \bnfelem{TOK\_BASIC\_START} \bnfelem{par\_id} \bnfelem{prop} & \\
+                   &     & \bnfelem{basic\_list} \bnfelem{TOK\_BLOCK\_END} \bnfor & \\
+                   &     & \bnfelem{TOK\_BASIC\_START} \bnfelem{par\_id} \bnfelem{basic\_list} & \\
+                   &     & \bnfelem{TOK\_BLOCK\_END} & \\

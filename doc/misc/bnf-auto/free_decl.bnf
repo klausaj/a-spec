@@ -1,0 +1,1 @@
+   \bnfelem{free\_decl} & ::= & \bnfelem{TOK\_IDENT} \bnfelem{TOK\_EQUALS} \bnfelem{free\_vars} & \\

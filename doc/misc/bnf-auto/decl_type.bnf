@@ -1,0 +1,4 @@
+   \bnfelem{decl\_type} & ::= & \bnfelem{dsch\_ref} \bnfor & \\
+                        &     & \bnfelem{var\_decl} \bnfor & \\
+                        &     & \bnfelem{func\_decl} \bnfor & \\
+                        &     & \bnfelem{op\_decl} & \\

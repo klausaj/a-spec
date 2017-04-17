@@ -1,0 +1,12 @@
+   \bnfelem{paragraph} & ::= & \bnfelem{doc\_info} \bnfor & \\
+                       &     & \bnfelem{schema} \bnfor & \\
+                       &     & \bnfelem{basic} \bnfor & \\
+                       &     & \bnfelem{type} \bnfor & \\
+                       &     & \bnfelem{free} \bnfor & \\
+                       &     & \bnfelem{axdef} \bnfor & \\
+                       &     & \bnfelem{const} \bnfor & \\
+                       &     & \bnfelem{gendef} \bnfor & \\
+                       &     & \bnfelem{gensch} \bnfor & \\
+                       &     & \bnfelem{desc} \bnfor & \\
+                       &     & \bnfelem{direc} \bnfor & \\
+                       &     & \bnfelem{error} \bnfelem{TOK\_BLOCK\_END} & \\

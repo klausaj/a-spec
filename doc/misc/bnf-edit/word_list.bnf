@@ -1,0 +1,2 @@
+   \bnfelem{word\_list} & ::= & \bnfelem{text\_tokens} \bnfor & \\
+                        &     & \bnfelem{word\_list} \bnfelem{text\_tokens} & \\

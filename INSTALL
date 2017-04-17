@@ -1,0 +1,35 @@
+   In the current phase of the project, A-Spec uses a very basic Makefile
+structure to build and install the compiler.  As the project nears completion
+of the Beta phase, a more sophisticated autoconf based installer shall be used.
+In the interim, the steps listed below should suffice to get the compiler up
+and running on most Unix based systems.
+
+Note: This will not build the A-Spec user-guide.  This can be obtained at:
+   http://sourceforge.net/projects/a-spec/files/
+
+1. Download latest A-Spec source tarball
+   a. http://sourceforge.net/projects/a-spec/files/
+
+2. Unpack A-Spec source tarball
+
+3. Enter A-Spec build directory
+   a. cd a-spec/build
+
+4. make
+
+5. make install
+   a. Requires super-user permissions
+
+6. Install Object Z LaTeX package
+   a. http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id=objectz
+
+7. Install A-Spec Extended Object Z LaTeX package
+   a. cp -a ../misc/TeX/tex/latex/eoz [LaTeX Package Directory]
+   b. [LaTeX Package Directory] is typically /usr/share/texmf/tex/latex/
+   c. As super-user: texhash
+
+8. Install A-Spec Vim plug-in (If syntax highlighting is desired)
+   a. cp ../misc/vim/as.vim [Vi Syntax Directory]
+   b. [Vi Syntax Directory] is typically /usr/share/vim/vimcurrent/syntax/
+   c. Add: "au BufRead,BufNewFile *.as set filetype=as" to [User Home]/.vimrc
+   d. Add: "au BufRead,BufNewFile *.al set filetype=as" to [User Home]/.vimrc

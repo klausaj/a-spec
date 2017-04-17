@@ -1,0 +1,1 @@
+   \bnfelem{gen\_term} & ::= & \bnfelem{TOK\_OSQUARE} \bnfelem{TOK\_IDENT} \bnfelem{TOK\_CSQUARE} & \\

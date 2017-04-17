@@ -1,0 +1,4 @@
+   \bnfelem{text\_tokens} & ::= & \bnfelem{all\_words} \bnfor & \\
+                          &     & \bnfelem{TOK\_STRING} \bnfor & \\
+                          &     & \bnfelem{TOK\_CHAR} \bnfor & \\
+                          &     & \bnfelem{TOK\_NUMBER} & \\

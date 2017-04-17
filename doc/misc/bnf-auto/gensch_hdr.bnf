@@ -1,0 +1,5 @@
+   \bnfelem{gensch\_hdr} & ::= & \bnfelem{TOK\_GENSCH\_START} \bnfelem{gen\_field} & \\
+                         &     & \bnfelem{sch\_name} \bnfelem{prop} \bnfelem{decl\_list1} & \\
+                         &     & \bnfelem{TOK\_WHERE} \bnfor & \\
+                         &     & \bnfelem{TOK\_GENSCH\_START} \bnfelem{gen\_field} & \\
+                         &     & \bnfelem{sch\_name} \bnfelem{decl\_list1} \bnfelem{TOK\_WHERE} & \\

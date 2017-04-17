@@ -1,0 +1,3 @@
+   \bnfelem{free\_entry} & ::= & \bnfelem{free\_decl} \bnfelem{TOK\_SEMICOLON} \bnfor & \\
+                         &     & \bnfelem{free\_decl} \bnfelem{TOK\_SEMICOLON} \bnfelem{TOK\_POUND} & \\
+                         &     & \bnfelem{TOK\_OSQUARE} \bnfelem{post\_props} \bnfelem{TOK\_CSQUARE} & \\
